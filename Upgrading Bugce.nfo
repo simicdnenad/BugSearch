@@ -1,0 +1,12 @@
+For generating Eclipse project file (to be able to Debug project from Eclipse IDE):
+1. Create /build folder,
+2. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug .. ;
+
+Upgrading Bugce:
+1. Add auto f1 = std::async(&Test::calculate, this, 11, 20);
+       auto res1 = f1.get();
+   for fetching results from thread. Try (only for training) std::future and std::promise things...
+2. Load bug and landscape one time instead of multiple times. Then start more threads from different lines of loaded field file. Log data in different files.
+
+Fixed:
+Bug.cpp:98, string::npos (circa 10pow8) don't match std::string::find() return value if string not find (-1);

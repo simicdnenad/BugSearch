@@ -1,5 +1,14 @@
 Bugce
 
+Small application which is searching throught "/test/landscape.txt" file for a char pattern written in "/test/bug.txt".
+
+Getting Started
+
+Generate Eclipse project file (to be able to Debug project from Eclipse IDE):
+1. Create /build folder,
+2. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug .. ;
+
+--------------------------------------------------------------------------------------------------------------------------
 Bugfixing/upgrading of Bugce.
 
 Upgrading Bugce:

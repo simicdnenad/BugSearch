@@ -11,7 +11,7 @@ class CBug
 {
 	unsigned m_uNumOfBugs, m_uNumOfLines, m_uBugMaxDim, m_uBugDimNum;
 	list<string> m_lFileLand, m_lFileBug;
-	list<string>::iterator *m_aiSearchBug, *m_aiBugItself;
+	list<string>::iterator *m_aiSearchForBug, *m_aiBugItself;
 	bool SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_from, unsigned int currbugdim);
 	unsigned MaxBugPart (unsigned dim);
 #ifdef SIMPLE_LOG

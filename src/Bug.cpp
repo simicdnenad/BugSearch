@@ -29,13 +29,21 @@ CBug::CBug()
 CBug::~CBug()
 {
 	delete [] m_aiBugItself;
-	delete [] m_aiSearchBug;
+	delete [] m_aiSearchForBug;
 #ifdef SIMPLE_LOG
 	if (m_fWriteFound.is_open())
 		m_fWriteFound.close();
 #endif
 }
-
+/**
+ * Initialize instance of CBug class.
+ *
+ * loads landscape and bug text files in list<string> data structures
+ *
+ * @param int ac		number of arguments in application call
+ * @param char** av		passed arguments
+ * @return bool status (success or false)
+ */
 bool CBug::OnInit(int ac, char** av)
 {
 	ifstream infilebug(av[1]),infilelanscape(av[2]);
@@ -66,6 +74,8 @@ bool CBug::OnInit(int ac, char** av)
 		for (unsigned int i = 0; i < m_uBugDimNum; i++)
 			m_fWriteFound<<(*m_aiBugItself[i])<<'\n';
 	}
+	else
+		cout << "Output file for writing found bugs open ERROR!!!" << '\n';
 #endif
 //----------------------LAND------------------------------
 	while (getline(infilelanscape,oneline))	// Add also num of lines count, to determine the optimal number of created threads
@@ -75,7 +85,7 @@ bool CBug::OnInit(int ac, char** av)
 		m_lFileLand.push_back(oneline);
 		m_uNumOfLines++;
 	}
-	m_aiSearchBug = new list<string>::iterator [m_uBugDimNum];
+	m_aiSearchForBug = new list<string>::iterator [m_uBugDimNum];
 
 	infilebug.close();
 	infilelanscape.close();
@@ -88,14 +98,14 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 	/**unsigned*/ int start_from=0,found_at = 0;
 	list<string>::iterator i_SearchBug = m_lFileLand.begin();
 	for (unsigned int i = 0; i < m_uBugDimNum && i_SearchBug != m_lFileLand.end(); i++)
-		m_aiSearchBug[i] = i_SearchBug++;
+		m_aiSearchForBug[i] = i_SearchBug++;
 
 	if (i_SearchBug == m_lFileLand.end())										// landscape.txt file is too small.
 		return 0;
 
-	while(m_aiSearchBug[m_uBugDimNum-1] != m_lFileLand.end())
+	while(m_aiSearchForBug[m_uBugDimNum-1] != m_lFileLand.end())
 	{
-		while((found_at = (*m_aiSearchBug[0]).find(*m_aiBugItself[0],start_from)) != -1 /**string::npos*/)
+		while((found_at = (*m_aiSearchForBug[0]).find(*m_aiBugItself[0],start_from)) != -1 /**string::npos*/)
 		{
 			unsigned int bugdim = 1;									// Compare every Bug's dimension
 			bool founded = false;
@@ -112,7 +122,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 #endif
 
 		for (unsigned int i = 0; i < m_uBugDimNum ; i++)
-			m_aiSearchBug[i]++;
+			m_aiSearchForBug[i]++;
 		start_from=0;
 	}
 
@@ -123,7 +133,7 @@ bool CBug::SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_fr
 {
 	unsigned int pos = 0;
 
-	pos = (*m_aiSearchBug[currbugdim]).find(*m_aiBugItself[currbugdim],found_at);
+	pos = (*m_aiSearchForBug[currbugdim]).find(*m_aiBugItself[currbugdim],found_at);
 
 	if (pos == found_at && currbugdim == (m_uBugDimNum-1))
 	{

@@ -9,10 +9,14 @@ Generate Eclipse project file (to be able to Debug project from Eclipse IDE):
 2. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug .. ;
 
 ## Usage
-
+## Under Eclipse IDE
 To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:
 ../test/bug.txt ../test/landscape.txt
 
+## From command line
+1. Go to /build folder,
+2. $make -f Makefile,
+3. $./BugceApp ../test/bug.txt ../test/landscape.txt;
 --------------------------------------------------------------------------------------------------------------------------
 Bugfixing/upgrading of Bugce.
 

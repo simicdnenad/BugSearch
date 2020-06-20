@@ -12,6 +12,7 @@ Generate Eclipse project file (to be able to Debug project from Eclipse IDE):
 ## Under Eclipse IDE
 To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:
 ../test/bug.txt ../test/landscape.txt
+(or File->Import->Run/Debug->Launch Configurations "/test/BugceAppDebugConfig.launch")
 
 ## From command line
 1. Go to /build folder,

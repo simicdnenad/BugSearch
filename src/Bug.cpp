@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <time.h>
 
-
+list<string>::iterator *CBug::s_aiBugItself;
 
 CBug::CBug()
 {
@@ -11,7 +11,6 @@ CBug::CBug()
 	m_uNumOfLines = 0;
 	m_uBugMaxDim = 0;
 	m_uBugDimNum = 0;
-	m_aiBugItself = NULL;
 #ifdef SIMPLE_LOG
 	m_uCurrLine = 1;
 	m_fWriteFound.open("WriteFoundBugs.txt");
@@ -28,7 +27,7 @@ CBug::CBug()
 
 CBug::~CBug()
 {
-	delete [] m_aiBugItself;
+	delete [] s_aiBugItself;
 	delete [] m_aiSearchForBug;
 #ifdef SIMPLE_LOG
 	if (m_fWriteFound.is_open())
@@ -54,31 +53,31 @@ bool CBug::OnInit(int ac, char** av)
 
 	while (getline(infilebug,oneline))
 	{
-		if(oneline.empty())
-			continue;
+		/**if(oneline.empty())
+			continue;						Not skipping empty lines to avoid "merging" of Bug parts */
 		m_lFileBug.push_back(oneline);
 		if (oneline.size() > m_uBugMaxDim)
 			m_uBugMaxDim = oneline.size();
 		m_uBugDimNum++;
 	}
 
-	m_aiBugItself = new list<string>::iterator [m_uBugDimNum];
+	s_aiBugItself = new list<string>::iterator [m_uBugDimNum];
 	list<string>::iterator i_BugItself = m_lFileBug.begin();
 	for (unsigned int i = 0; i < m_uBugDimNum && i_BugItself != m_lFileBug.end(); i++)
-		m_aiBugItself[i] = i_BugItself++;
+		s_aiBugItself[i] = i_BugItself++;
 
 #ifdef SIMPLE_LOG
 	if (m_fWriteFound.is_open())
 	{
 		m_fWriteFound<<"Bug pattern:\n";
 		for (unsigned int i = 0; i < m_uBugDimNum; i++)
-			m_fWriteFound<<(*m_aiBugItself[i])<<'\n';
+			m_fWriteFound<<(*s_aiBugItself[i])<<'\n';
 	}
 	else
 		cout << "Output file for writing found bugs open ERROR!!!" << '\n';
 #endif
 //----------------------LAND------------------------------
-	while (getline(infilelanscape,oneline))	// Add also num of lines count, to determine the optimal number of created threads
+	while (getline(infilelanscape,oneline))		// Add also num of lines count, to determine the optimal number of created threads
 	{
 		/**if(oneline.empty())
 			continue;							Not skipping empty lines to avoid "merging" of Bug parts */
@@ -105,7 +104,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 
 	while(m_aiSearchForBug[m_uBugDimNum-1] != m_lFileLand.end())
 	{
-		while((found_at = (*m_aiSearchForBug[0]).find(*m_aiBugItself[0],start_from)) != -1 /**string::npos*/)
+		while((found_at = (*m_aiSearchForBug[0]).find(*s_aiBugItself[0],start_from)) != -1 /**string::npos*/)
 		{
 			unsigned int bugdim = 1;									// Compare every Bug's dimension
 			bool founded = false;
@@ -133,7 +132,7 @@ bool CBug::SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_fr
 {
 	unsigned int pos = 0;
 
-	pos = (*m_aiSearchForBug[currbugdim]).find(*m_aiBugItself[currbugdim],found_at);
+	pos = (*m_aiSearchForBug[currbugdim]).find(*s_aiBugItself[currbugdim],found_at);
 
 	if (pos == found_at && currbugdim == (m_uBugDimNum-1))
 	{

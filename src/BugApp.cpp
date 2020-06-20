@@ -10,7 +10,6 @@ int main(int ac, char** av)
 	double time_spent;
 	begin = clock();
 #endif
-
 	CBug bubica;
 	if(bubica.OnInit(ac,av))
 	{

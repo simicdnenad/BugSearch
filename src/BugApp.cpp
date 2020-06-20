@@ -11,6 +11,8 @@ int main(int ac, char** av)
 	begin = clock();
 #endif
 	CBug bubica;
+	unsigned int NumOfLines=0;
+	thread** apThreads=NULL;
 	if(bubica.OnInit(ac,av))
 	{
 		cout << "Input files are correctly opened and loaded in memory." << '\n';
@@ -18,8 +20,18 @@ int main(int ac, char** av)
 	else
 		cout << "Input files are not correctly opened!!!" << '\n';
 
-	cout << "Number of lines:" << bubica.GetNumOfLines() << '\n';
-	cout << "Number of Bugs:" << bubica.NumOfBugs() << '\n';
+	cout << "Number of lines:" << (NumOfLines = bubica.GetNumOfLines()) << '\n';
+	apThreads= new thread* [NumOfLines/LINES_PER_THREAD+1];
+	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
+	{
+		apThreads[i]=new thread((CBug()));
+	}
+
+	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
+	{
+		apThreads[i]->join();								// how to get calculate value from thread (bubica.NumOfBugs()?!)
+		//cout << "Number of Bugs:" << bubica.NumOfBugs() << '\n';
+	}
 
 #ifdef CHECK_TIME
     end = clock();

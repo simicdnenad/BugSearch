@@ -5,7 +5,10 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <thread>
 using namespace std;
+
+#define LINES_PER_THREAD		50000
 
 class CBug
 {
@@ -27,4 +30,5 @@ public:
 	unsigned int NumOfBugs(unsigned int start_line=0);
 	unsigned int GetNumOfLines() const;
 	unsigned int GetNumOfBugs() const;
+	void operator ()();								// should be thread's function
 };

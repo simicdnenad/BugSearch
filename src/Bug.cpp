@@ -172,3 +172,14 @@ unsigned CBug::MaxBugPart (unsigned dim)
 		}
 	return max_dim;
 }
+/**
+ * Thread function
+ *
+ * Use to create C++11 Thread as Function Objects
+ *
+ * @param none
+ * @return none
+ */
+void CBug::operator ()(){
+	NumOfBugs(0);
+}

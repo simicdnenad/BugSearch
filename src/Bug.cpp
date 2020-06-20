@@ -4,13 +4,13 @@
 #include <time.h>
 
 list<string>::iterator *CBug::s_aiBugItself;
+unsigned CBug::s_uBugMaxDim, CBug::s_uBugDimNum;
+list<string> CBug::s_lFileLand, CBug::s_lFileBug;
 
 CBug::CBug()
 {
 	m_uNumOfBugs = 0;
 	m_uNumOfLines = 0;
-	m_uBugMaxDim = 0;
-	m_uBugDimNum = 0;
 #ifdef SIMPLE_LOG
 	m_uCurrLine = 1;
 	m_fWriteFound.open("WriteFoundBugs.txt");
@@ -55,22 +55,22 @@ bool CBug::OnInit(int ac, char** av)
 	{
 		/**if(oneline.empty())
 			continue;						Not skipping empty lines to avoid "merging" of Bug parts */
-		m_lFileBug.push_back(oneline);
-		if (oneline.size() > m_uBugMaxDim)
-			m_uBugMaxDim = oneline.size();
-		m_uBugDimNum++;
+		s_lFileBug.push_back(oneline);
+		if (oneline.size() > s_uBugMaxDim)
+			s_uBugMaxDim = oneline.size();
+		s_uBugDimNum++;
 	}
 
-	s_aiBugItself = new list<string>::iterator [m_uBugDimNum];
-	list<string>::iterator i_BugItself = m_lFileBug.begin();
-	for (unsigned int i = 0; i < m_uBugDimNum && i_BugItself != m_lFileBug.end(); i++)
+	s_aiBugItself = new list<string>::iterator [s_uBugDimNum];
+	list<string>::iterator i_BugItself = s_lFileBug.begin();
+	for (unsigned int i = 0; i < s_uBugDimNum && i_BugItself != s_lFileBug.end(); i++)
 		s_aiBugItself[i] = i_BugItself++;
 
 #ifdef SIMPLE_LOG
 	if (m_fWriteFound.is_open())
 	{
 		m_fWriteFound<<"Bug pattern:\n";
-		for (unsigned int i = 0; i < m_uBugDimNum; i++)
+		for (unsigned int i = 0; i < s_uBugDimNum; i++)
 			m_fWriteFound<<(*s_aiBugItself[i])<<'\n';
 	}
 	else
@@ -81,10 +81,10 @@ bool CBug::OnInit(int ac, char** av)
 	{
 		/**if(oneline.empty())
 			continue;							Not skipping empty lines to avoid "merging" of Bug parts */
-		m_lFileLand.push_back(oneline);
+		s_lFileLand.push_back(oneline);
 		m_uNumOfLines++;
 	}
-	m_aiSearchForBug = new list<string>::iterator [m_uBugDimNum];
+	m_aiSearchForBug = new list<string>::iterator [s_uBugDimNum];
 
 	infilebug.close();
 	infilelanscape.close();
@@ -95,14 +95,14 @@ bool CBug::OnInit(int ac, char** av)
 unsigned int CBug::NumOfBugs(unsigned int start_line)
 {
 	/**unsigned*/ int start_from=0,found_at = 0;
-	list<string>::iterator i_SearchBug = m_lFileLand.begin();
-	for (unsigned int i = 0; i < m_uBugDimNum && i_SearchBug != m_lFileLand.end(); i++)
+	list<string>::iterator i_SearchBug = s_lFileLand.begin();
+	for (unsigned int i = 0; i < s_uBugDimNum && i_SearchBug != s_lFileLand.end(); i++)
 		m_aiSearchForBug[i] = i_SearchBug++;
 
-	if (i_SearchBug == m_lFileLand.end())										// landscape.txt file is too small.
+	if (i_SearchBug == s_lFileLand.end())										// landscape.txt file is too small.
 		return 0;
 
-	while(m_aiSearchForBug[m_uBugDimNum-1] != m_lFileLand.end())
+	while(m_aiSearchForBug[s_uBugDimNum-1] != s_lFileLand.end())
 	{
 		while((found_at = (*m_aiSearchForBug[0]).find(*s_aiBugItself[0],start_from)) != -1 /**string::npos*/)
 		{
@@ -111,7 +111,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 			do
 			{
 				founded = SearchBugPart(found_at, start_from, bugdim++);
-			}while(founded && bugdim < m_uBugDimNum);
+			}while(founded && bugdim < s_uBugDimNum);
 
 			if(!founded)
 				start_from = found_at + MaxBugPart(bugdim-2);	// Bug not founded, skip its longest founded part
@@ -120,7 +120,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 		m_uCurrLine++;
 #endif
 
-		for (unsigned int i = 0; i < m_uBugDimNum ; i++)
+		for (unsigned int i = 0; i < s_uBugDimNum ; i++)
 			m_aiSearchForBug[i]++;
 		start_from=0;
 	}
@@ -134,17 +134,17 @@ bool CBug::SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_fr
 
 	pos = (*m_aiSearchForBug[currbugdim]).find(*s_aiBugItself[currbugdim],found_at);
 
-	if (pos == found_at && currbugdim == (m_uBugDimNum-1))
+	if (pos == found_at && currbugdim == (s_uBugDimNum-1))
 	{
 		m_uNumOfBugs++;
-		start_from = found_at + m_uBugMaxDim;		// Skip founded Bug in next search
+		start_from = found_at + s_uBugMaxDim;		// Skip founded Bug in next search
 #ifdef SIMPLE_LOG
 		if (m_fWriteFound.is_open())
 			m_fWriteFound<<"Bug number:" << m_uNumOfBugs << " ,found at line:"<< m_uCurrLine << " ,at position:"<<  found_at+1<< '\n';
 #endif
 		return true;
 	}
-	else if(pos == found_at && currbugdim < (m_uBugDimNum-1))
+	else if(pos == found_at && currbugdim < (s_uBugDimNum-1))
 		return true;
 	else
 		return false;
@@ -162,7 +162,7 @@ unsigned int CBug::GetNumOfBugs() const
 
 unsigned CBug::MaxBugPart (unsigned dim)
 {
-	list<string>::iterator i_SearchBug = m_lFileBug.begin();
+	list<string>::iterator i_SearchBug = s_lFileBug.begin();
 	unsigned max_dim = 0;
 	for (unsigned i=0;i<=dim;i++)
 		if((*i_SearchBug).length() > max_dim)

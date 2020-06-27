@@ -11,6 +11,7 @@ int main(int ac, char** av)
 	begin = clock();
 #endif
 	CBug bubica;
+	CBug** apBubice=NULL;
 	unsigned int NumOfLines=0;
 	thread** apThreads=NULL;
 	if(bubica.OnInit(ac,av))
@@ -22,9 +23,11 @@ int main(int ac, char** av)
 
 	cout << "Number of lines:" << (NumOfLines = bubica.GetNumOfLines()) << '\n';
 	apThreads= new thread* [NumOfLines/LINES_PER_THREAD+1];
+	apBubice= new CBug* [NumOfLines/LINES_PER_THREAD+1];
 	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
-		apThreads[i]=new thread((CBug()));
+		apBubice[i]=new CBug();
+		apThreads[i]=new thread(&CBug::NumOfBugs,apBubice[i],i*LINES_PER_THREAD);
 	}
 
 	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)

@@ -30,5 +30,11 @@ public:
 	unsigned int NumOfBugs(unsigned int start_line=0);
 	unsigned int GetNumOfLines() const;
 	unsigned int GetNumOfBugs() const;
-	void operator ()();								// should be thread's function
+#ifdef NOTDEF 					// not working!!!
+	void operator()()			// should be thread's function
+	{
+		NumOfBugs(0);
+	}
+#endif
 };
+

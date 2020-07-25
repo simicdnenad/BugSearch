@@ -4,30 +4,53 @@
 #include <time.h>
 
 list<string>::iterator *CBug::s_aiBugItself;
-unsigned CBug::s_uBugMaxDim, CBug::s_uBugDimNum;
+unsigned CBug::s_uBugMaxDim, CBug::s_uBugDimNum, CBug::s_uNumOfLines;
 list<string> CBug::s_lFileLand, CBug::s_lFileBug;
+#ifdef MULTI_THREAD
+	unsigned CBug::s_uNumOfThreads=0;
+#endif
 
 CBug::CBug()
 {
+#ifdef MULTI_THREAD
+	m_uThreadId=s_uNumOfThreads++;
+#endif
 	m_uNumOfBugs = 0;
-	m_uNumOfLines = 0;
+	m_aiSearchForBug = new list<string>::iterator [s_uBugDimNum];
 #ifdef SIMPLE_LOG
-	m_uCurrLine = 1;
-	m_fWriteFound.open("WriteFoundBugs.txt");
+#ifdef MULTI_THREAD
+	m_uCurrLine = m_uThreadId*LINES_PER_THREAD;
+	string sPath = "WriteFoundBugs" + std::to_string(m_uThreadId);
+#ifdef linux
+	sPath += ".nfo";
+#elif _WIN32
+	sPath += ".txt";
+#endif
+#else
+	m_uCurrLine = 0;
+	string sPath = "WriteFoundBugs";
+#endif
+	m_fWriteFound.open(sPath.c_str());
 	if (m_fWriteFound.is_open())
 	{
-		cout << "WriteFoundBugs.txt opened successfully for writing.\n";
-		m_fWriteFound << "This is the file for logging founded Bug patterns.\n";
+		cout << sPath.c_str() << " opened successfully for writing.\n";
+		m_fWriteFound << "This is the file for logging founded Bug patterns ("
+#ifdef MULTI_THREAD
+				<< m_uThreadId
+#endif
+				<< ").\n";
 	}
 	else
-		cout << "Unable to open WriteFoundBugs.txt file! \n";
+		cout << "Unable to open" <<   sPath.c_str() << "file! \n";
 #endif
 
 }
 
 CBug::~CBug()
 {
-	delete [] s_aiBugItself;
+	s_uNumOfThreads--;
+	if(s_uNumOfThreads==0)
+		delete [] s_aiBugItself;
 	delete [] m_aiSearchForBug;
 #ifdef SIMPLE_LOG
 	if (m_fWriteFound.is_open())
@@ -66,7 +89,7 @@ bool CBug::OnInit(int ac, char** av)
 	for (unsigned int i = 0; i < s_uBugDimNum && i_BugItself != s_lFileBug.end(); i++)
 		s_aiBugItself[i] = i_BugItself++;
 
-#ifdef SIMPLE_LOG
+#if defined(SIMPLE_LOG) && defined(NOTDEF)
 	if (m_fWriteFound.is_open())
 	{
 		m_fWriteFound<<"Bug pattern:\n";
@@ -82,9 +105,8 @@ bool CBug::OnInit(int ac, char** av)
 		/**if(oneline.empty())
 			continue;							Not skipping empty lines to avoid "merging" of Bug parts */
 		s_lFileLand.push_back(oneline);
-		m_uNumOfLines++;
+		s_uNumOfLines++;
 	}
-	m_aiSearchForBug = new list<string>::iterator [s_uBugDimNum];
 
 	infilebug.close();
 	infilelanscape.close();
@@ -150,9 +172,9 @@ bool CBug::SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_fr
 		return false;
 }
 
-unsigned int CBug::GetNumOfLines() const
+unsigned int CBug::GetNumOfLines()
 {
-	return m_uNumOfLines;
+	return s_uNumOfLines;
 }
 
 unsigned int CBug::GetNumOfBugs() const

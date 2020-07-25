@@ -5,6 +5,7 @@
 
 int main(int ac, char** av)
 {
+	unsigned int NumOfLines=0;
 #ifdef CHECK_TIME
 	clock_t begin, end;
 	double time_spent;
@@ -12,7 +13,6 @@ int main(int ac, char** av)
 #endif
 #ifndef MULTI_THREAD
 	CBug bubica;
-	unsigned int NumOfLines=0;
 
 	if(bubica.OnInit(ac,av))
 	{
@@ -21,24 +21,31 @@ int main(int ac, char** av)
 	else
 		cout << "Input files are not correctly opened!!!" << '\n';
 
-	cout << "Number of lines:" << (NumOfLines = bubica.GetNumOfLines()) << '\n';
+	cout << "Number of lines:" << (NumOfLines = CBug::GetNumOfLines()) << '\n';
 	cout << "Number of found bugs:" << (NumOfLines = bubica.NumOfBugs()) << '\n';
 #else
+	CBug::OnInit(ac,av);
+	cout << "Number of lines:" << (NumOfLines = CBug::GetNumOfLines()) << '\n';
 	CBug** apBubice=NULL;
 	thread** apThreads=NULL;
-	apThreads= new thread* [1/**NumOfLines/LINES_PER_THREAD+1*/];
-	apBubice= new CBug* [1/**NumOfLines/LINES_PER_THREAD+1*/];
-	for (unsigned int i=0;i<1/**NumOfLines/LINES_PER_THREAD+1*/;i++)
+	apThreads= new thread* [NumOfLines/LINES_PER_THREAD+1];
+	apBubice= new CBug* [NumOfLines/LINES_PER_THREAD+1];
+	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
-		apBubice[i]=/**new CBug();*/&bubica;
+		apBubice[i]=new CBug();
+#ifdef NOTDEF
 		apThreads[i]=new thread(&CBug::NumOfBugs,apBubice[i],i*LINES_PER_THREAD);
+#endif
 	}
 
-	for (unsigned int i=0;i<1/**NumOfLines/LINES_PER_THREAD+1*/;i++)
+	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
+#ifdef NOTDEF
 		apThreads[i]->join();								// how to get calculate value from thread (bubica.NumOfBugs()?!)
 		//cout << "Number of Bugs:" << bubica.NumOfBugs() << '\n';
 		delete apThreads[i];
+#endif
+		delete apBubice[i];
 	}
 	delete[] apThreads;
 	delete[] apBubice;

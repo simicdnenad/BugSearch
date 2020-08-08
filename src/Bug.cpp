@@ -21,14 +21,14 @@ CBug::CBug()
 #ifdef MULTI_THREAD
 	m_uCurrLine = m_uThreadId*LINES_PER_THREAD;
 	string sPath = "WriteFoundBugs" + std::to_string(m_uThreadId);
+#else
+	m_uCurrLine = 0;
+	string sPath = "WriteFoundBugs";
+#endif
 #ifdef linux
 	sPath += ".nfo";
 #elif _WIN32
 	sPath += ".txt";
-#endif
-#else
-	m_uCurrLine = 0;
-	string sPath = "WriteFoundBugs";
 #endif
 	m_fWriteFound.open(sPath.c_str());
 	if (m_fWriteFound.is_open())

@@ -19,10 +19,10 @@ CBug::CBug()
 	m_aiSearchForBug = new list<string>::iterator [s_uBugDimNum];
 #ifdef SIMPLE_LOG
 #ifdef MULTI_THREAD
-	m_uCurrLine = m_uThreadId*LINES_PER_THREAD;
+	m_uCurrLine = m_uThreadId*LINES_PER_THREAD+1;
 	string sPath = "WriteFoundBugs" + std::to_string(m_uThreadId);
 #else
-	m_uCurrLine = 0;
+	m_uCurrLine = 1;
 	string sPath = "WriteFoundBugs";
 #endif
 #ifdef linux
@@ -39,6 +39,10 @@ CBug::CBug()
 				<< m_uThreadId
 #endif
 				<< ").\n";
+
+		m_fWriteFound<<"Bug pattern:\n";
+		for (unsigned int i = 0; i < s_uBugDimNum; i++)
+			m_fWriteFound<<(*s_aiBugItself[i])<<'\n';
 	}
 	else
 		cout << "Unable to open" <<   sPath.c_str() << "file! \n";
@@ -91,16 +95,6 @@ bool CBug::OnInit(int ac, char** av)
 	for (unsigned int i = 0; i < s_uBugDimNum && i_BugItself != s_lFileBug.end(); i++)
 		s_aiBugItself[i] = i_BugItself++;
 
-#if defined(SIMPLE_LOG) && defined(NOTDEF)
-	if (m_fWriteFound.is_open())
-	{
-		m_fWriteFound<<"Bug pattern:\n";
-		for (unsigned int i = 0; i < s_uBugDimNum; i++)
-			m_fWriteFound<<(*s_aiBugItself[i])<<'\n';
-	}
-	else
-		cout << "Output file for writing found bugs open ERROR!!!" << '\n';
-#endif
 //----------------------LAND------------------------------
 	while (getline(infilelanscape,oneline))		// Add also num of lines count, to determine the optimal number of created threads
 	{
@@ -118,7 +112,7 @@ bool CBug::OnInit(int ac, char** av)
 
 unsigned int CBug::NumOfBugs(unsigned int start_line)
 {
-	/**unsigned*/ int start_from=0,found_at = 0;
+	/**unsigned*/ int start_from=0,found_at = 0, processed_line=start_line;
 	list<string>::iterator i_SearchBug = s_lFileLand.begin();
 	advance(i_SearchBug, start_line);
 	for (unsigned int i = 0; i < s_uBugDimNum && i_SearchBug != s_lFileLand.end(); i++)
@@ -127,7 +121,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 	if (i_SearchBug == s_lFileLand.end())										// landscape.txt file is too small.
 		return 0;
 
-	while(m_aiSearchForBug[s_uBugDimNum-1] != s_lFileLand.end())
+	while(m_aiSearchForBug[s_uBugDimNum-1] != s_lFileLand.end() &&  processed_line < (start_line + LINES_PER_THREAD))
 	{
 		while((found_at = (*m_aiSearchForBug[0]).find(*s_aiBugItself[0],start_from)) != NOT_FOUND)
 		{
@@ -141,6 +135,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 			if(!founded)
 				start_from = found_at + MaxBugPart(bugdim-2);	// Bug not founded, skip its longest founded part
 		}
+		processed_line++;
 #ifdef SIMPLE_LOG
 		m_uCurrLine++;
 #endif

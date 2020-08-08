@@ -39,7 +39,8 @@ int main(int ac, char** av)
 	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
 		apThreads[i]->join();								// how to get calculate value from thread (bubica.NumOfBugs()?!)
-		cout << "Number of Bugs (tid=" << apBubice[i]->GetThreadId() << ")=" << apBubice[i]->NumOfBugs() << "\n";
+		cout << "Number of Bugs (tid=" << apBubice[i]->GetThreadId() << ")=" << apBubice[i]->GetNumOfBugs() << "\n";
+		//TODO: add all together with C++11 mutex and printout
 		delete apThreads[i];
 		delete apBubice[i];
 	}

@@ -9,6 +9,12 @@
 using namespace std;
 
 #define LINES_PER_THREAD		50000
+#ifdef _WIN32
+#define NOT_FOUND	string::npos
+#elif linux
+#define NOT_FOUND	-1
+#endif
+
 
 class CBug
 {
@@ -32,6 +38,7 @@ public:
 	virtual ~CBug();
 #ifdef MULTI_THREAD
 	static bool OnInit(int ac, char** av);
+	unsigned GetThreadId() const { return m_uThreadId;}
 #else
 	bool OnInit(int ac, char** av);
 #endif

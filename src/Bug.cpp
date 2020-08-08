@@ -48,8 +48,10 @@ CBug::CBug()
 
 CBug::~CBug()
 {
+#ifdef MULTI_THREAD
 	s_uNumOfThreads--;
 	if(s_uNumOfThreads==0)
+#endif
 		delete [] s_aiBugItself;
 	delete [] m_aiSearchForBug;
 #ifdef SIMPLE_LOG
@@ -118,6 +120,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 {
 	/**unsigned*/ int start_from=0,found_at = 0;
 	list<string>::iterator i_SearchBug = s_lFileLand.begin();
+	advance(i_SearchBug, start_line);
 	for (unsigned int i = 0; i < s_uBugDimNum && i_SearchBug != s_lFileLand.end(); i++)
 		m_aiSearchForBug[i] = i_SearchBug++;
 
@@ -126,7 +129,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 
 	while(m_aiSearchForBug[s_uBugDimNum-1] != s_lFileLand.end())
 	{
-		while((found_at = (*m_aiSearchForBug[0]).find(*s_aiBugItself[0],start_from)) != -1 /**string::npos*/)
+		while((found_at = (*m_aiSearchForBug[0]).find(*s_aiBugItself[0],start_from)) != NOT_FOUND)
 		{
 			unsigned int bugdim = 1;									// Compare every Bug's dimension
 			bool founded = false;
@@ -142,7 +145,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 		m_uCurrLine++;
 #endif
 
-		for (unsigned int i = 0; i < s_uBugDimNum ; i++)
+		for (unsigned int i = 0; i < s_uBugDimNum ; i++)		// shift for one line below
 			m_aiSearchForBug[i]++;
 		start_from=0;
 	}

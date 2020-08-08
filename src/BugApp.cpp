@@ -33,18 +33,14 @@ int main(int ac, char** av)
 	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
 		apBubice[i]=new CBug();
-#ifdef NOTDEF
 		apThreads[i]=new thread(&CBug::NumOfBugs,apBubice[i],i*LINES_PER_THREAD);
-#endif
 	}
 
 	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
-#ifdef NOTDEF
 		apThreads[i]->join();								// how to get calculate value from thread (bubica.NumOfBugs()?!)
-		//cout << "Number of Bugs:" << bubica.NumOfBugs() << '\n';
+		cout << "Number of Bugs (tid=" << apBubice[i]->GetThreadId() << ")=" << apBubice[i]->NumOfBugs() << "\n";
 		delete apThreads[i];
-#endif
 		delete apBubice[i];
 	}
 	delete[] apThreads;

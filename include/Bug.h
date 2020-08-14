@@ -6,6 +6,7 @@
 #include <string>
 #include <list>
 #include <thread>
+#include <mutex>
 using namespace std;
 
 #define LINES_PER_THREAD		50000
@@ -21,8 +22,9 @@ class CBug
 	unsigned m_uNumOfBugs;
 	static unsigned s_uBugMaxDim, s_uBugDimNum, s_uNumOfLines;
 #ifdef MULTI_THREAD
-	static unsigned s_uNumOfThreads;
+	static unsigned s_uNumOfThreads, s_uTotalNOB;
 	unsigned m_uThreadId;
+	static mutex s_mTotalNOB;
 #endif
 	static list<string> s_lFileLand, s_lFileBug;
 	list<string>::iterator *m_aiSearchForBug;
@@ -38,11 +40,13 @@ public:
 	virtual ~CBug();
 #ifdef MULTI_THREAD
 	static bool OnInit(int ac, char** av);
+	static unsigned GetTotNumOfBugs();
 	unsigned GetThreadId() const { return m_uThreadId;}
+	void IncTotNumOfBugs(unsigned int incr);
 #else
 	bool OnInit(int ac, char** av);
 #endif
-	unsigned int NumOfBugs(unsigned int start_line=0);
+	void NumOfBugs(unsigned int start_line=0);
 	static unsigned int GetNumOfLines();
 	unsigned int GetNumOfBugs() const;
 #ifdef NOTDEF 					// not working!!!

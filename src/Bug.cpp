@@ -7,7 +7,8 @@ list<string>::iterator *CBug::s_aiBugItself;
 unsigned CBug::s_uBugMaxDim, CBug::s_uBugDimNum, CBug::s_uNumOfLines;
 list<string> CBug::s_lFileLand, CBug::s_lFileBug;
 #ifdef MULTI_THREAD
-	unsigned CBug::s_uNumOfThreads=0;
+	unsigned CBug::s_uNumOfThreads=0, CBug::s_uTotalNOB;
+	mutex CBug::s_mTotalNOB;
 #endif
 
 CBug::CBug()
@@ -110,7 +111,7 @@ bool CBug::OnInit(int ac, char** av)
 	return true;
 }
 
-unsigned int CBug::NumOfBugs(unsigned int start_line)
+void CBug::NumOfBugs(unsigned int start_line)
 {
 	/**unsigned*/ int start_from=0,found_at = 0, processed_line=start_line;
 	list<string>::iterator i_SearchBug = s_lFileLand.begin();
@@ -119,7 +120,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 		m_aiSearchForBug[i] = i_SearchBug++;
 
 	if (i_SearchBug == s_lFileLand.end())										// landscape.txt file is too small.
-		return 0;
+		return;
 
 	while(m_aiSearchForBug[s_uBugDimNum-1] != s_lFileLand.end() &&  processed_line < (start_line + LINES_PER_THREAD))
 	{
@@ -145,7 +146,7 @@ unsigned int CBug::NumOfBugs(unsigned int start_line)
 		start_from=0;
 	}
 
-	return m_uNumOfBugs;
+	IncTotNumOfBugs(m_uNumOfBugs);
 }
 
 bool CBug::SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_from, unsigned int currbugdim)
@@ -179,6 +180,14 @@ unsigned int CBug::GetNumOfBugs() const
 {
 	return m_uNumOfBugs;
 }
+#ifdef MULTI_THREAD
+void CBug::IncTotNumOfBugs(unsigned int incr)
+{
+	std::lock_guard<std::mutex> guard(s_mTotalNOB);
+	s_uTotalNOB+=incr;
+}
+unsigned CBug::GetTotNumOfBugs() { return s_uTotalNOB;}
+#endif
 
 unsigned CBug::MaxBugPart (unsigned dim)
 {

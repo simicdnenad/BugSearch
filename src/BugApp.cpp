@@ -40,12 +40,12 @@ int main(int ac, char** av)
 	{
 		apThreads[i]->join();								// how to get calculate value from thread (bubica.NumOfBugs()?!)
 		cout << "Number of Bugs (tid=" << apBubice[i]->GetThreadId() << ")=" << apBubice[i]->GetNumOfBugs() << "\n";
-		//TODO: add all together with C++11 mutex and printout
 		delete apThreads[i];
 		delete apBubice[i];
 	}
 	delete[] apThreads;
 	delete[] apBubice;
+	cout << "Total number of Bugs" << CBug::GetTotNumOfBugs() << "\n";
 #endif
 #ifdef CHECK_TIME
     end = clock();

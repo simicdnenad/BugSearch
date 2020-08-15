@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <time.h>
+#include <vector>
 
 int main(int ac, char** av)
 {
@@ -26,26 +27,27 @@ int main(int ac, char** av)
 #else
 	CBug::OnInit(ac,av);
 	cout << "Number of lines:" << (NumOfLines = CBug::GetNumOfLines()) << '\n';
-	CBug** apBubice=NULL;
-	thread** apThreads=NULL;
-	apThreads= new thread* [NumOfLines/LINES_PER_THREAD+1];
-	apBubice= new CBug* [NumOfLines/LINES_PER_THREAD+1];
+	vector<std::thread> vThreads;
+	vector<CBug*> vpBugs;
 	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
-		apBubice[i]=new CBug();
-		apThreads[i]=new thread(&CBug::NumOfBugs,apBubice[i],i*LINES_PER_THREAD);
+		vpBugs.push_back(new CBug());					// TODO: reporting error when i want to forward CBug() as a argument!!!
+		vThreads.push_back(std::thread(&CBug::NumOfBugs,vpBugs.back(),i*LINES_PER_THREAD));
 	}
 
-	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
+	std::vector<std::thread>::iterator iThreads=vThreads.begin();
+	std::vector<CBug*>::iterator ipBugs=vpBugs.begin();
+	while(iThreads!=vThreads.end())
 	{
-		apThreads[i]->join();								// how to get calculate value from thread (bubica.NumOfBugs()?!)
-		cout << "Number of Bugs (tid=" << apBubice[i]->GetThreadId() << ")=" << apBubice[i]->GetNumOfBugs() << "\n";
-		delete apThreads[i];
-		delete apBubice[i];
+		iThreads->join();
+		cout << "Number of Bugs (tid=" << (*ipBugs)->GetThreadId() << ")=" << (*ipBugs)->GetNumOfBugs() << "\n";
+		iThreads++;
+		delete (*ipBugs);
+		ipBugs++;
 	}
-	delete[] apThreads;
-	delete[] apBubice;
-	cout << "Total number of Bugs" << CBug::GetTotNumOfBugs() << "\n";
+	vThreads.erase(vThreads.begin(), iThreads);
+	vpBugs.erase(vpBugs.begin(), ipBugs);
+	cout << "Total number of Bugs: " << CBug::GetTotNumOfBugs() << "\n";
 #endif
 #ifdef CHECK_TIME
     end = clock();

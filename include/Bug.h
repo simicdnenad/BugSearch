@@ -7,6 +7,7 @@
 #include <list>
 #include <thread>
 #include <mutex>
+#include <memory>				// added for smart pointers usage
 using namespace std;
 
 #define LINES_PER_THREAD		50000

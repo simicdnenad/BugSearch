@@ -32,3 +32,4 @@ Upgrading Bugce:
 
 Fixed:
 Bug.cpp:98, On Linux string::npos (circa 10pow8) don't match std::string::find() return value if string not find (-1); On Windows (VS) this is working ok.
+Added smart pointers in "BugApp.cpp". TODO: add smart pointers in "Bug.cpp".

@@ -28,25 +28,24 @@ int main(int ac, char** av)
 	CBug::OnInit(ac,av);
 	cout << "Number of lines:" << (NumOfLines = CBug::GetNumOfLines()) << '\n';
 	vector<std::thread> vThreads;
-	vector<CBug*> vpBugs;
+	vector<unique_ptr<CBug>> vupBugs;
 	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
-		vpBugs.push_back(new CBug());					// TODO: reporting error when i want to forward CBug() as a argument!!!
-		vThreads.push_back(std::thread(&CBug::NumOfBugs,vpBugs.back(),i*LINES_PER_THREAD));
+		vupBugs.push_back((unique_ptr<CBug>)(new CBug()));
+		vThreads.push_back(std::thread(&CBug::NumOfBugs,vupBugs.back().get(),i*LINES_PER_THREAD));				// std::unique_ptr::get -- return stored pointer
 	}
 
-	std::vector<std::thread>::iterator iThreads=vThreads.begin();
-	std::vector<CBug*>::iterator ipBugs=vpBugs.begin();
+	vector<std::thread>::iterator iThreads=vThreads.begin();
+	vector<unique_ptr<CBug>>::iterator iupBugs=vupBugs.begin();
 	while(iThreads!=vThreads.end())
 	{
 		iThreads->join();
-		cout << "Number of Bugs (tid=" << (*ipBugs)->GetThreadId() << ")=" << (*ipBugs)->GetNumOfBugs() << "\n";
+		cout << "Number of Bugs (tid=" << ((*iupBugs).get())->GetThreadId() << ")=" << ((*iupBugs).get())->GetNumOfBugs() << "\n";
 		iThreads++;
-		delete (*ipBugs);
-		ipBugs++;
+		iupBugs++;
 	}
 	vThreads.erase(vThreads.begin(), iThreads);
-	vpBugs.erase(vpBugs.begin(), ipBugs);
+	vupBugs.erase(vupBugs.begin(), iupBugs);
 	cout << "Total number of Bugs: " << CBug::GetTotNumOfBugs() << "\n";
 #endif
 #ifdef CHECK_TIME

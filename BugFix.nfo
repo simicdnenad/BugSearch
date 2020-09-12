@@ -1,2 +1,0 @@
-Fixed:
-Bug.cpp:98, string::npos (circa 10pow8) don't match std::string::find() return value if string not find (-1);

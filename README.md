@@ -5,19 +5,19 @@ Small application which is searching throught "/test/landscape.txt" file for a c
 ## Getting Started
 
 Generate Eclipse project file (to be able to Debug project from Eclipse IDE):
-1. Create /build folder,
-2. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug .. ;
+1. Create /build folder in sibling folder of cloned repo,
+2. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../github-upload/ ;
 
 ## Usage
 ## Under Eclipse IDE
 To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:
-../test/bug.txt ../test/landscape.txt
+../github-upload/test/bug.txt ../github-upload/test/landscape.txt
 (or File->Import->Run/Debug->Launch Configurations "/test/BugceAppDebugConfig.launch")
 
 ## From command line
 1. Go to /build folder,
 2. $make -f Makefile,
-3. $./BugceApp ../test/bug.txt ../test/landscape.txt;
+3. $./BugceApp ../github-upload/test/bug.txt ../github-upload/test/landscape.txt;
 --------------------------------------------------------------------------------------------------------------------------
 Bugfixing/upgrading of Bugce.
 
@@ -32,4 +32,3 @@ Upgrading Bugce:
 
 Fixed:
 Bug.cpp:98, On Linux string::npos (circa 10pow8) don't match std::string::find() return value if string not find (-1); On Windows (VS) this is working ok.
-Added smart pointers in "BugApp.cpp". TODO: add smart pointers in "Bug.cpp".

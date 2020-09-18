@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <vector>
 #include <thread>
 #include <mutex>
 #include <memory>				// added for smart pointers usage
@@ -28,8 +29,8 @@ class CBug
 	static mutex s_mTotalNOB;
 #endif
 	static list<string> s_lFileLand, s_lFileBug;
-	list<string>::iterator *m_aiSearchForBug;
-	static list<string>::iterator *s_aiBugItself;
+	vector<list<string>::iterator> m_viSearchForBug;
+	static vector<list<string>::iterator> s_viBugItself;
 	bool SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_from, unsigned int currbugdim);
 	unsigned MaxBugPart (unsigned dim);
 #ifdef SIMPLE_LOG

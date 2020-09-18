@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <time.h>
 
-list<string>::iterator *CBug::s_aiBugItself;
+vector<list<string>::iterator> CBug::s_viBugItself;
 unsigned CBug::s_uBugMaxDim, CBug::s_uBugDimNum, CBug::s_uNumOfLines;
 list<string> CBug::s_lFileLand, CBug::s_lFileBug;
 #ifdef MULTI_THREAD
@@ -17,7 +17,6 @@ CBug::CBug()
 	m_uThreadId=s_uNumOfThreads++;
 #endif
 	m_uNumOfBugs = 0;
-	m_aiSearchForBug = new list<string>::iterator [s_uBugDimNum];
 #ifdef SIMPLE_LOG
 #ifdef MULTI_THREAD
 	m_uCurrLine = m_uThreadId*LINES_PER_THREAD+1;
@@ -43,7 +42,7 @@ CBug::CBug()
 
 		m_fWriteFound<<"Bug pattern:\n";
 		for (unsigned int i = 0; i < s_uBugDimNum; i++)
-			m_fWriteFound<<(*s_aiBugItself[i])<<'\n';
+			m_fWriteFound<<(*s_viBugItself[i])<<'\n';
 	}
 	else
 		cout << "Unable to open" <<   sPath.c_str() << "file! \n";
@@ -57,8 +56,6 @@ CBug::~CBug()
 	s_uNumOfThreads--;
 	if(s_uNumOfThreads==0)
 #endif
-		delete [] s_aiBugItself;
-	delete [] m_aiSearchForBug;
 #ifdef SIMPLE_LOG
 	if (m_fWriteFound.is_open())
 		m_fWriteFound.close();
@@ -90,11 +87,10 @@ bool CBug::OnInit(int ac, char** av)
 			s_uBugMaxDim = oneline.size();
 		s_uBugDimNum++;
 	}
-
-	s_aiBugItself = new list<string>::iterator [s_uBugDimNum];
 	list<string>::iterator i_BugItself = s_lFileBug.begin();
 	for (unsigned int i = 0; i < s_uBugDimNum && i_BugItself != s_lFileBug.end(); i++)
-		s_aiBugItself[i] = i_BugItself++;
+		s_viBugItself.push_back(i_BugItself++);
+
 
 //----------------------LAND------------------------------
 	while (getline(infilelanscape,oneline))		// Add also num of lines count, to determine the optimal number of created threads
@@ -117,14 +113,14 @@ void CBug::NumOfBugs(unsigned int start_line)
 	list<string>::iterator i_SearchBug = s_lFileLand.begin();
 	advance(i_SearchBug, start_line);
 	for (unsigned int i = 0; i < s_uBugDimNum && i_SearchBug != s_lFileLand.end(); i++)
-		m_aiSearchForBug[i] = i_SearchBug++;
+		m_viSearchForBug.push_back(i_SearchBug++);
 
 	if (i_SearchBug == s_lFileLand.end())										// landscape.txt file is too small.
 		return;
 
-	while(m_aiSearchForBug[s_uBugDimNum-1] != s_lFileLand.end() &&  processed_line < (start_line + LINES_PER_THREAD))
+	while(m_viSearchForBug[s_uBugDimNum-1] != s_lFileLand.end() &&  processed_line < (start_line + LINES_PER_THREAD))
 	{
-		while((found_at = (*m_aiSearchForBug[0]).find(*s_aiBugItself[0],start_from)) != NOT_FOUND)
+		while((found_at = (*m_viSearchForBug[0]).find(*s_viBugItself[0],start_from)) != NOT_FOUND)
 		{
 			unsigned int bugdim = 1;									// Compare every Bug's dimension
 			bool founded = false;
@@ -142,7 +138,7 @@ void CBug::NumOfBugs(unsigned int start_line)
 #endif
 
 		for (unsigned int i = 0; i < s_uBugDimNum ; i++)		// shift for one line below
-			m_aiSearchForBug[i]++;
+			m_viSearchForBug[i]++;
 		start_from=0;
 	}
 
@@ -153,7 +149,7 @@ bool CBug::SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_fr
 {
 	unsigned int pos = 0;
 
-	pos = (*m_aiSearchForBug[currbugdim]).find(*s_aiBugItself[currbugdim],found_at);
+	pos = (*m_viSearchForBug[currbugdim]).find(*s_viBugItself[currbugdim],found_at);
 
 	if (pos == found_at && currbugdim == (s_uBugDimNum-1))
 	{

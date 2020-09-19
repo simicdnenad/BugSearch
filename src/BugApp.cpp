@@ -25,18 +25,18 @@ int main(int ac, char** av)
 	cout << "Number of lines:" << (NumOfLines = CBug::GetNumOfLines()) << '\n';
 	cout << "Number of found bugs:" << (NumOfLines = bubica.NumOfBugs()) << '\n';
 #else
-	CBug::OnInit(ac,av);
-	cout << "Number of lines:" << (NumOfLines = CBug::GetNumOfLines()) << '\n';
+	CBug<string,CONTAINER<string>::iterator,CONTAINER>::OnInit(ac,av);
+	cout << "Number of lines:" << (NumOfLines = CBug<string,CONTAINER<string>::iterator,CONTAINER>::GetNumOfLines()) << '\n';
 	vector<std::thread> vThreads;
-	vector<unique_ptr<CBug>> vupBugs;
+	vector<unique_ptr<CBug<string,CONTAINER<string>::iterator,CONTAINER>>> vupBugs;
 	for (unsigned int i=0;i<NumOfLines/LINES_PER_THREAD+1;i++)
 	{
-		vupBugs.push_back((unique_ptr<CBug>)(new CBug()));
-		vThreads.push_back(std::thread(&CBug::NumOfBugs,vupBugs.back().get(),i*LINES_PER_THREAD));				// std::unique_ptr::get -- return stored pointer
+		vupBugs.push_back((unique_ptr<CBug<string,CONTAINER<string>::iterator,CONTAINER>>)(new CBug<string,CONTAINER<string>::iterator,CONTAINER>()));
+		vThreads.push_back(std::thread(&CBug<string,CONTAINER<string>::iterator,CONTAINER>::NumOfBugs,vupBugs.back().get(),i*LINES_PER_THREAD));				// std::unique_ptr::get -- return stored pointer
 	}
 
 	vector<std::thread>::iterator iThreads=vThreads.begin();
-	vector<unique_ptr<CBug>>::iterator iupBugs=vupBugs.begin();
+	vector<unique_ptr<CBug<string,CONTAINER<string>::iterator,CONTAINER>>>::iterator iupBugs=vupBugs.begin();
 	while(iThreads!=vThreads.end())
 	{
 		iThreads->join();
@@ -46,7 +46,7 @@ int main(int ac, char** av)
 	}
 	vThreads.erase(vThreads.begin(), iThreads);
 	vupBugs.erase(vupBugs.begin(), iupBugs);
-	cout << "Total number of Bugs: " << CBug::GetTotNumOfBugs() << "\n";
+	cout << "Total number of Bugs: " << CBug<string,CONTAINER<string>::iterator,CONTAINER>::GetTotNumOfBugs() << "\n";
 #endif
 #ifdef CHECK_TIME
     end = clock();

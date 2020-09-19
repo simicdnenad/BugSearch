@@ -22,9 +22,8 @@ To be able to test application, under "Eclise->Project properties->Run/Debug Set
 Bugfixing/upgrading of Bugce.
 
 Upgrading Bugce:
-1. Add auto f1 = std::async(&Test::calculate, this, 11, 20);
-       auto res1 = f1.get();
-   for fetching results from thread. Try (only for training) std::future and std::promise things...
+1. Implement application as template. (Object should be created as (e.g.) CBug<string,array<string>::iterator,array>). 
+COMPLETE FIRST THIS WAY! LATER TRY SOME SIMPLER LOGIC (CONSIDERING THAT STRING DATA TYPE IS ALWAYS USED)!!! 
 
 2. Add std::vector for thread access (instead of use of an array of *(std::thread)).
 2.1 BUG: when i do std::vector<CBug>::push_back(CBug()) comiler reports error: "use of deleted function CBug(const CBug&)"!!!

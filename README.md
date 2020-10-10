@@ -4,9 +4,13 @@ Small application which is searching throught "/test/landscape.txt" file for a c
 
 ## Getting Started
 
+## Under Linux:
 Generate Eclipse project file (to be able to Debug project from Eclipse IDE):
 1. Create /build folder in sibling folder of cloned repo,
 2. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../github-upload/ ;
+## Under Windows:
+Generate VS2015 project file:
+2. Run $cmake -G"Visual Studio 14 2015 Win64" ../github-upload/ ;
 
 ## Usage
 ## Under Eclipse IDE

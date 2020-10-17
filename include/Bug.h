@@ -20,6 +20,8 @@ using namespace std;
 #define LINES_PER_THREAD		50000
 #ifdef _WIN32
 #define NOT_FOUND	string::npos
+#define _CRTDBG_MAP_ALLOC		// for detection of memory leaks
+#include <crtdbg.h>				//for malloc and free
 #elif linux
 #define NOT_FOUND	-1
 #endif

@@ -42,17 +42,15 @@ int main(int ac, char** av)
 			vThreads.push_back(std::thread(&CBug<string, CONTAINER<string>::iterator, CONTAINER>::NumOfBugs, vupBugs.back().get(), i*LINES_PER_THREAD));				// std::unique_ptr::get -- return stored pointer
 		}
 
-		auto iThreads = vThreads.begin();
 		auto iupBugs = vupBugs.begin();
-		while (iThreads != vThreads.end())
+		for(std::thread& rThread :vThreads)
 		{
-			if (iThreads->joinable())
-				iThreads->join();
+			if (rThread.joinable())
+				rThread.join();
 			cout << "Number of Bugs (tid=" << ((*iupBugs).get())->GetThreadId() << ")=" << ((*iupBugs).get())->GetNumOfBugs() << "\n";
-			iThreads++;
 			iupBugs++;
 		}
-		vThreads.erase(vThreads.begin(), iThreads);
+		vThreads.erase(vThreads.begin(), vThreads.end());
 		vupBugs.erase(vupBugs.begin(), iupBugs);
 		cout << "Total number of Bugs: " << CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetTotNumOfBugs() << "\n";
 #endif

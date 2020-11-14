@@ -170,7 +170,7 @@ bool CBug<Data,iData,Container>::OnInit(int ac, char** av)
 	{
 		/**if(oneline.empty())
 			continue;						Not skipping empty lines to avoid "merging" of Bug parts */
-		s_lFileBug.push_back(oneline);
+		s_lFileBug.emplace_back(oneline);
 		if (oneline.size() > s_uBugMaxDim)
 			s_uBugMaxDim = oneline.size();
 		s_uBugDimNum++;
@@ -185,7 +185,7 @@ bool CBug<Data,iData,Container>::OnInit(int ac, char** av)
 	{
 		/**if(oneline.empty())
 			continue;							Not skipping empty lines to avoid "merging" of Bug parts */
-		s_lFileLand.push_back(oneline);
+		s_lFileLand.emplace_back(oneline);
 		s_uNumOfLines++;
 	}
 

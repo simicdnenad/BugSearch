@@ -36,7 +36,8 @@ Bugs:
 (maybe because of statically allocated strings?!)
 
 Upgrading Bugce:
-1. 
+1. When i try to replace vector<unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>> => vector<CBug<string, CONTAINER<string>::iterator, CONTAINER>>,
+calling of ~CBug() after vector::push_back(CBug()) is making side effects;
 
 
 Fixed:

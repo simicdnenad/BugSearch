@@ -39,7 +39,7 @@ int main(int ac, char** av)
 		for (unsigned int i = 0;i < NumOfLines / LINES_PER_THREAD + 1;i++)
 		{
 			vupBugs.push_back((unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>)(new CBug<string, CONTAINER<string>::iterator, CONTAINER>()));
-			vThreads.push_back(std::thread(&CBug<string, CONTAINER<string>::iterator, CONTAINER>::NumOfBugs, vupBugs.back().get(), i*LINES_PER_THREAD));				// std::unique_ptr::get -- return stored pointer
+			vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())),i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
 		}
 
 		auto iupBugs = vupBugs.begin();

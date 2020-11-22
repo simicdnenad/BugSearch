@@ -63,12 +63,10 @@ public:
 	void NumOfBugs(unsigned int start_line=0);
 	static unsigned int GetNumOfLines(){return s_uNumOfLines;}
 	unsigned int GetNumOfBugs() const {  return m_uNumOfBugs;}
-#ifdef NOTDEF 					// not working!!!
-	void operator()()			// should be thread's function
+	void operator()(unsigned int start_line)			// implement as functor
 	{
-		NumOfBugs(0);
+		NumOfBugs(start_line);
 	}
-#endif
 };
 ////////////////////// static fields
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >

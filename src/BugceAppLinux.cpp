@@ -6,6 +6,15 @@
 
 int main(int ac, char** av)
 {
+	po::variables_map vm;
+	po::options_description desc("Allowed Options");
+
+	// declare arguments (boost)
+	desc.add_options()
+			("bug_file", po::value<std::string>()->required(), "Provide relative path to \"bug.txt\" file")
+			("landscape_file", po::value<std::string>()->required(), "Provide relative path to \"landscape.txt\" file");
+
+	 try {
 #ifdef WIN32
 	_CrtMemState sOld;
 	_CrtMemState sNew;
@@ -19,20 +28,27 @@ int main(int ac, char** av)
 		double time_spent;
 		begin = clock();
 #endif
-#ifndef MULTI_THREAD
-		CBug bubica;
+		po::store(po::parse_command_line(ac, av, desc), vm);
+		std::cout << "Inputed arguments are: bug_file:" << vm["bug_file"].as<std::string>()
+				<< "  landscape_file:" << vm["landscape_file"].as<std::string>() << std::endl;
 
-		if (bubica.OnInit(ac, av))
+		po::notify(vm);						// for reporting exception
+
+#ifndef MULTI_THREAD
+		CBug<string, CONTAINER<string>::iterator, CONTAINER> bubica;
+
+		if (bubica.OnInit(vm))
 		{
 			cout << "Input files are correctly opened and loaded in memory." << '\n';
 		}
 		else
 			cout << "Input files are not correctly opened!!!" << '\n';
 
-		cout << "Number of lines:" << (NumOfLines = CBug::GetNumOfLines()) << '\n';
-		cout << "Number of found bugs:" << (NumOfLines = bubica.NumOfBugs()) << '\n';
+		cout << "Number of lines:" << (NumOfLines = CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetNumOfLines()) << '\n';
+		bubica.NumOfBugs();
+		cout << "Number of found bugs:" << (NumOfLines = bubica.GetNumOfBugs()) << '\n';
 #else
-		CBug<string, CONTAINER<string>::iterator, CONTAINER>::OnInit(ac, av);
+		CBug<string, CONTAINER<string>::iterator, CONTAINER>::OnInit(vm);
 		cout << "Number of lines:" << (NumOfLines = CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetNumOfLines()) << '\n';
 		vector<std::thread> vThreads;
 		vector<unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>> vupBugs;
@@ -73,4 +89,10 @@ int main(int ac, char** av)
 	}
 #endif
 	return 0;
+
+	} catch (std::exception& e) {
+	  std::cout << "Error: " << e.what() << std::endl;
+	  std::cout << desc << std::endl;
+	  return 1;
+	}
 }

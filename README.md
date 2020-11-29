@@ -14,7 +14,7 @@ Clone repo with:
 1. git clone https://github.com/simicdnenad/github-upload.git ;
 ### Under Linux:
 Generate Eclipse project file (to be able to Debug project from Eclipse IDE):
-1. Create /build folder in sibling folder of cloned repo,
+1. Create /build folder in sibling folder of cloned repo,  
 2. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../github-upload/ ;
 
 ### Under Windows:
@@ -25,17 +25,18 @@ Generate VS2015 project file:
 ### Under Linux:
 ### Under Eclipse IDE
 To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:  
-../github-upload/test/bug.txt ../github-upload/test/landscape.txt
+--bug_file ../github-upload/test/bug.txt  
+--landscape_file ../github-upload/test/landscape.txt  
 (or File->Import->Run/Debug->Launch Configurations "/test/BugceAppDebugConfig.launch")
 ### From command line
-1. Go to /build folder,
-2. $make -f Makefile,
-3. $./BugceApp ../github-upload/test/bug.txt ../github-upload/test/landscape.txt;
+1. Go to /build folder,  
+2. $make -f Makefile,  
+3. $./BugceAppLinux --bug_file ../github-upload/test/bug.txt --landscape_file ../github-upload/test/landscape.txt;  
 
 ### Under Windows:
 ### Under VS2015 IDE:
 1. To be able to test application, under "Project Properties->Debugging->Command Arguments add:
-"..\..\test\bug.txt" "..\..\test\landscape.txt"
+"..\..\test\bug.txt" "..\..\test\landscape.txt"  
 2. In same panel edit "WorkingDirectory"=$(ProjectDir)\Debug;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -47,7 +48,8 @@ Bugs:
 
 Upgrading Bugce:
 1. Changed to creating thread body on funciton objects instead on method body,  
-2. When i try to replace vector<unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>> => vector<CBug<string, CONTAINER<string>::iterator, CONTAINER>>,
+2. Added Boost program options for handling input program arguments,  
+3. When i try to replace vector<unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>> => vector<CBug<string, CONTAINER<string>::iterator, CONTAINER>>,
 calling of ~CBug() after vector::push_back(CBug()) is making side effects;
 
 

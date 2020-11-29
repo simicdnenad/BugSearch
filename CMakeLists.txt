@@ -32,7 +32,7 @@ ENDIF()
 
 if (UNIX)
 ADD_EXECUTABLE (BugceAppLinux ${SRC_FILES})
-TARGET_LINK_LIBRARIES (BugceAppLinux LINK_PUBLIC pthread)
+TARGET_LINK_LIBRARIES (BugceAppLinux LINK_PUBLIC pthread boost_program_options)
 ENDIF()
 if (WIN32)
 ADD_EXECUTABLE (BugceAppWin ${SRC_FILES})

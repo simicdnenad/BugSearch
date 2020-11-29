@@ -8,16 +8,22 @@
 #include <vector>
 #include <thread>
 #include <mutex>
-#include <memory>				// added for smart pointers usage
+#include <memory>								// added for smart pointers usage
 ////////////////////////////
 #include <algorithm>
 #include <time.h>
+#include <boost/program_options.hpp>			// Boost Program Options
 ////////////////////////////
 using namespace std;
-
+namespace po = boost::program_options;
 #define CONTAINER vector
 
+#ifdef MULTI_THREAD
 #define LINES_PER_THREAD		50000
+#else
+#define LINES_PER_THREAD		1000000			// MAX_NUMOF_LINES
+#endif
+
 #ifdef _WIN32
 #define NOT_FOUND	string::npos
 #define _CRTDBG_MAP_ALLOC		// for detection of memory leaks
@@ -37,7 +43,6 @@ class CBug
 	static mutex s_mTotalNOB;
 #endif
 	static Container<Data> s_lFileLand, s_lFileBug;
-	vector<iData> m_viSearchForBug;
 	static vector<iData> s_viBugItself;
 	bool SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_from, unsigned int currbugdim);
 	unsigned MaxBugPart (unsigned dim);
@@ -49,7 +54,7 @@ public:
 	CBug();
 	virtual ~CBug();
 #ifdef MULTI_THREAD
-	static bool OnInit(int ac, char** av);
+	static bool OnInit(po::variables_map& mapInputArgs);
 	static unsigned GetTotNumOfBugs(){ return s_uTotalNOB;}
 	unsigned GetThreadId() const { return m_uThreadId;}
 	void IncTotNumOfBugs(unsigned int incr)
@@ -58,7 +63,7 @@ public:
 		s_uTotalNOB+=incr;
 	}
 #else
-	bool OnInit(int ac, char** av);
+	bool OnInit(po::variables_map& mapInputArgs);
 #endif
 	void NumOfBugs(unsigned int start_line=0);
 	static unsigned int GetNumOfLines(){return s_uNumOfLines;}
@@ -67,6 +72,22 @@ public:
 	{
 		NumOfBugs(start_line);
 	}
+////////////////////////////////////////////////// Iterator design pattern
+	class Iterator{
+		CBug* p_Collection;
+		iData i_CurrEl, i_LastEl;
+
+	public:
+		Iterator(CBug& rBug,unsigned start_line, unsigned last_line);
+	    Iterator& operator++();							// pre-increment
+	    Iterator operator++(int);						// post-increment
+	    bool operator==(const Iterator& ciBug) const;
+	    bool operator!=(const Iterator& ciBug) const;
+	    Data& operator*();
+		virtual ~Iterator();
+	};
+private:
+	vector<Iterator> m_viSearchForBug;
 };
 ////////////////////// static fields
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
@@ -156,9 +177,9 @@ CBug<Data,iData,Container>::~CBug()
  * @return bool status (success or false)
  */
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
-bool CBug<Data,iData,Container>::OnInit(int ac, char** av)
+bool CBug<Data,iData,Container>::OnInit(po::variables_map& mapInputArgs)
 {
-	ifstream infilebug(av[1]),infilelanscape(av[2]);
+	ifstream infilebug(mapInputArgs["bug_file"].as<std::string>()),infilelanscape(mapInputArgs["landscape_file"].as<std::string>());
 	Data oneline;
 
 	if (infilebug.fail() || infilelanscape.fail())
@@ -197,15 +218,12 @@ template <class Data, class iData, template<typename _Tp, typename _Alloc = std:
 void CBug<Data,iData,Container>::NumOfBugs(unsigned int start_line)
 {
 	/**unsigned*/ int start_from=0,found_at = 0, processed_line=start_line;
-	iData i_SearchBug = s_lFileLand.begin();
-	advance(i_SearchBug, start_line);
-	for (unsigned int i = 0; i < s_uBugDimNum && i_SearchBug != s_lFileLand.end(); i++)
-		m_viSearchForBug.push_back(i_SearchBug++);
+	for (unsigned int i = 0; i < s_uBugDimNum && i+processed_line < GetNumOfLines(); i++)
+		m_viSearchForBug.push_back(Iterator(*this,start_line+i,start_line + LINES_PER_THREAD+i));
+	if(processed_line + s_uBugDimNum > GetNumOfLines())
+		return; 																// landscape.txt file is too small.
 
-	if (i_SearchBug == s_lFileLand.end())										// landscape.txt file is too small.
-		return;
-
-	while(m_viSearchForBug[s_uBugDimNum-1] != s_lFileLand.end() &&  processed_line < (start_line + LINES_PER_THREAD))
+	while(processed_line < (start_line + LINES_PER_THREAD-s_uBugDimNum+1) && processed_line < (GetNumOfLines()-s_uBugDimNum+1))
 	{
 		while((found_at = (*m_viSearchForBug[0]).find(*s_viBugItself[0],start_from)) != NOT_FOUND)
 		{
@@ -228,8 +246,9 @@ void CBug<Data,iData,Container>::NumOfBugs(unsigned int start_line)
 			m_viSearchForBug[i]++;
 		start_from=0;
 	}
-
+#ifdef MULTI_THREAD
 	IncTotNumOfBugs(m_uNumOfBugs);
+#endif
 }
 
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
@@ -270,4 +289,57 @@ unsigned CBug<Data,iData,Container>::MaxBugPart (unsigned dim)
 	return max_dim;
 }
 
+////////////////////////////////////////////////// Iterator design pattern
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+CBug<Data,iData,Container>::Iterator::Iterator(CBug& rBug,unsigned start_line, unsigned last_line)
+{
+	p_Collection=&rBug;
+	i_CurrEl=i_LastEl=p_Collection->s_lFileLand.begin();
+	advance(i_CurrEl, start_line);
 
+	if(s_lFileLand.end()-i_CurrEl > LINES_PER_THREAD)
+		advance(i_LastEl, start_line + LINES_PER_THREAD);
+	else
+		i_LastEl= s_lFileLand.end();
+}
+
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+typename CBug<Data,iData,Container>::Iterator&  CBug<Data,iData,Container>::Iterator::operator++()
+{
+	i_CurrEl++;
+
+	return *this;
+}
+
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+typename CBug<Data,iData,Container>::Iterator  CBug<Data,iData,Container>::Iterator::operator++(int)
+{
+	Iterator bugTemp=*this;
+
+	i_CurrEl++;
+	return bugTemp;
+}
+
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+CBug<Data,iData,Container>::Iterator::~Iterator()
+{
+	p_Collection=NULL;
+}
+
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+bool CBug<Data,iData,Container>::Iterator::operator==(const Iterator& ciBug) const
+{
+	return i_CurrEl==ciBug.i_CurrEl;
+}
+
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+bool CBug<Data,iData,Container>::Iterator::operator!=(const Iterator& ciBug) const
+{
+	return !(i_CurrEl==ciBug.i_CurrEl);
+}
+
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+Data&  CBug<Data,iData,Container>::Iterator::operator*()
+{
+	return *i_CurrEl;
+}

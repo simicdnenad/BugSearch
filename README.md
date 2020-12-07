@@ -7,19 +7,23 @@ Tested on:
 18.04.1-Ubuntu (Debian),  
 cmake version 3.10.2,  
 g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0,  
-Eclipse 2019-06 (4.12.0);  
+Eclipse 2019-06 (4.12.0);
+
+Windows 8,
+VS 2017 Community (VC141),
+Boost 1.65.1,
 
 ## Development
-Clone repo with:
-1. git clone https://github.com/simicdnenad/github-upload.git ;
+Clone repo with:  
+1. git clone https://github.com/simicdnenad/github-upload.git,  
+2. Create /build folder in sibling folder of cloned repo;  
 ### Under Linux:
-Generate Eclipse project file (to be able to Debug project from Eclipse IDE):
-1. Create /build folder in sibling folder of cloned repo,  
-2. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../github-upload/ ;
+Generate Eclipse project file (to be able to Debug project from Eclipse IDE):  
+1. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../github-upload/ ;  
 
 ### Under Windows:
-Generate VS2015 project file:
-1. Run $cmake -G"Visual Studio 14 2015 Win64" ../github-upload/ ;
+Generate VS2015 project file:  
+1. Run $cmake -G"Visual Studio 15 2017 Win64" ../github-upload/;  
 
 ## Testing
 ### Under Linux:
@@ -34,9 +38,9 @@ To be able to test application, under "Eclise->Project properties->Run/Debug Set
 3. $./BugceAppLinux --bug_file ../github-upload/test/bug.txt --landscape_file ../github-upload/test/landscape.txt;  
 
 ### Under Windows:
-### Under VS2015 IDE:
-1. To be able to test application, under "Project Properties->Debugging->Command Arguments add:
-"..\..\test\bug.txt" "..\..\test\landscape.txt"  
+### Under VS2017 IDE:
+1. To be able to test application, under "Project Properties->Debugging->Command Arguments add (apsolute paths):
+--bug_file "D:\\Bugce\\github-upload\\test\\bug.txt"   --landscape_file "D:\\Bugce\\github-upload\\test\\landscape.txt"  
 2. In same panel edit "WorkingDirectory"=$(ProjectDir)\Debug;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------

@@ -21,9 +21,9 @@ Clone repo with:
 Generate Eclipse project file (to be able to Debug project from Eclipse IDE):  
 1. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../github-upload/ ;  
 
-### Under Windows:
-Generate VS2015 project file:  
-1. Run $cmake -G"Visual Studio 15 2017 Win64" ../github-upload/;  
+### Under Windows: 
+1. Add Environment Variable: BOOST_ROOT (e.g. "C:\Program Files\boost\boost_1_65_1"),  
+2. Generate VS2017 project file: Run $cmake -G"Visual Studio 15 2017 Win64" ../github-upload/;  
 
 ## Testing
 ### Under Linux:

@@ -1,5 +1,21 @@
 #pragma once
 
+#ifdef _WIN32
+#define NOT_FOUND	string::npos
+#define _CRTDBG_MAP_ALLOC		// for detection of memory leaks
+#include <stdlib.h>
+#include <crtdbg.h>				//for malloc and free
+#ifdef _DEBUG
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+#else
+#define DBG_NEW new
+#endif
+#elif linux
+#define NOT_FOUND	-1
+#endif
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -22,14 +38,6 @@ namespace po = boost::program_options;
 #define LINES_PER_THREAD		50000
 #else
 #define LINES_PER_THREAD		1000000			// MAX_NUMOF_LINES
-#endif
-
-#ifdef _WIN32
-#define NOT_FOUND	string::npos
-#define _CRTDBG_MAP_ALLOC		// for detection of memory leaks
-#include <crtdbg.h>				//for malloc and free
-#elif linux
-#define NOT_FOUND	-1
 #endif
 
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >

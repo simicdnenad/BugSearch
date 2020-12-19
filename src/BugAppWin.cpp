@@ -48,7 +48,7 @@ int main_app(int ac, char** av)
 		vector<unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>> vupBugs;
 		for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++)
 		{
-			vupBugs.push_back((unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>)(new CBug<string, CONTAINER<string>::iterator, CONTAINER>()));
+			vupBugs.push_back((unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>)(DBG_NEW CBug<string, CONTAINER<string>::iterator, CONTAINER>()));
 			vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
 		}
 
@@ -80,22 +80,9 @@ int main_app(int ac, char** av)
 
 int main(int ac, char** av)
 {
-	_CrtMemState sOld;
-	_CrtMemState sNew;
-	_CrtMemState sDiff;
-	_CrtMemCheckpoint(&sOld);				//take a snapshot at app start
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);		// check memory automatically after the program terminates (also static objects)
 
 	main_app(ac, av);
 
-	_CrtMemCheckpoint(&sNew);				//take a snapshot at app end
-	if (_CrtMemDifference(&sDiff, &sOld, &sNew)) // if there is a difference
-	{
-		cout << "-----------_CrtMemDumpStatistics ---------" << endl; //OutputDebugString(L"-----------_CrtMemDumpStatistics ---------");
-		_CrtMemDumpStatistics(&sDiff);
-		//cout << "-----------_CrtMemDumpAllObjectsSince ---------" << endl; // OutputDebugString(L"-----------_CrtMemDumpAllObjectsSince ---------");
-		//CrtMemDumpAllObjectsSince(&sOld);
-		cout << "-----------_CrtDumpMemoryLeaks ---------" << endl; 
-		_CrtDumpMemoryLeaks();
-	}
     return 0;
 }

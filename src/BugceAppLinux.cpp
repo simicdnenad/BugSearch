@@ -15,13 +15,6 @@ int main(int ac, char** av)
 			("landscape_file", po::value<std::string>()->required(), "Provide relative path to \"landscape.txt\" file");
 
 	 try {
-#ifdef WIN32
-	_CrtMemState sOld;
-	_CrtMemState sNew;
-	_CrtMemState sDiff;
-	_CrtMemCheckpoint(&sOld);				//take a snapshot at app start
-#endif
-	{
 		unsigned int NumOfLines = 0;
 #ifdef CHECK_TIME
 		clock_t begin, end;
@@ -75,19 +68,7 @@ int main(int ac, char** av)
 		time_spent = (double)(end - begin) / (CLOCKS_PER_SEC / 1000);
 		cout << "Time of program execution is:" << time_spent << "ms\n";
 #endif
-	}
-#ifdef WIN32
-	_CrtMemCheckpoint(&sNew);				//take a snapshot at app end
-	if (_CrtMemDifference(&sDiff, &sOld, &sNew)) // if there is a difference
-	{
-		//OutputDebugString(L"-----------_CrtMemDumpStatistics ---------");
-		//_CrtMemDumpStatistics(&sDiff);
-		//OutputDebugString(L"-----------_CrtMemDumpAllObjectsSince ---------");
-		//CrtMemDumpAllObjectsSince(&sOld);
-		//OutputDebugString(L"-----------_CrtDumpMemoryLeaks ---------");
-		_CrtDumpMemoryLeaks();
-	}
-#endif
+
 	return 0;
 
 	} catch (std::exception& e) {

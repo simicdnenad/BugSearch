@@ -46,10 +46,6 @@ To be able to test application, under "Eclise->Project properties->Run/Debug Set
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Bugfixing/Upgrading.
-Bugs:
-1.(Windows) _CrtDumpMemoryLeaks(); detect memory leaks! Same code on Linux with "valgrind" don't report any leaks;
-(maybe because of statically allocated strings?!)
-
 Upgrading Bugce:
 1. Changed to creating thread body on funciton objects instead on method body,  
 2. Added Boost program options for handling input program arguments,  
@@ -58,4 +54,5 @@ calling of ~CBug() after vector::push_back(CBug()) is making side effects;
 
 
 Fixed:
-Bug.cpp:98, On Linux string::npos (circa 10pow8) don't match std::string::find() return value if string not find (-1); On Windows (VS) this is working ok.
+1. On Linux platform, string::npos (circa 10pow8) doesn't match return value of std::string::find() in "string not find (-1)" case (under Windows),
+2. Added finding memory leaks on Windows with the CRT library;

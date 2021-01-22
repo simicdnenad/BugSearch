@@ -1,5 +1,4 @@
 #pragma once
-
 ////////////////////// static fields
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 vector<iData> CBug<Data, iData, Container>::s_viBugItself;
@@ -24,9 +23,20 @@ unsigned CBug<Data, iData, Container>::s_uTotalNOB;
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 mutex CBug<Data, iData, Container>::s_mTotalNOB;
 #endif
+#ifdef _DEBUG
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+ofstream CBug<Data, iData, Container>::s_fDebugTrace;
+#endif
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+const map<typename CBug<Data, iData, Container>::EFileOpenErrors, string> CBug<Data, iData, Container>::mapFileErrors = {
+	{EFileOpenErrors::ALL_SUCCESSFULL, "Every file opened successfully."},
+	{EFileOpenErrors::DEBUG_FAIL, "Failed to open Debug file:"},
+	{EFileOpenErrors::LANDSCAPE_FAIL, "Failed to open landscape file:"},
+	{EFileOpenErrors::BUG_FAIL, "Failed to open bug file:"}
+};
 ////////////////////////// methods
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
-CBug<Data, iData, Container>::CBug()
+CBug<Data, iData, Container>::CBug(string sBugName):m_sBugName(sBugName)
 {
 #ifdef MULTI_THREAD
 	m_uThreadId = s_uNumOfThreads++;
@@ -35,10 +45,10 @@ CBug<Data, iData, Container>::CBug()
 #ifdef SIMPLE_LOG
 #ifdef MULTI_THREAD
 	m_uCurrLine = m_uThreadId * LINES_PER_THREAD + 1;
-	string sPath = "WriteFoundBugs" + std::to_string(m_uThreadId);
+	string sPath = "WriteFound" + m_sBugName + std::to_string(m_uThreadId);
 #else
 	m_uCurrLine = 1;
-	string sPath = "WriteFoundBugs";
+	string sPath = "WriteFound"+ m_sBugName;
 #endif
 #ifdef linux
 	sPath += ".nfo";
@@ -77,7 +87,22 @@ CBug<Data, iData, Container>::~CBug()
 			m_fWriteFound.close();
 #endif
 }
-
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+void CBug<Data, iData, Container>::clearLastSearch()
+{
+	// Bug related data
+	s_uBugDimNum = 0;
+	s_uBugMaxDim = 0;
+	s_lFileBug.clear();
+	s_viBugItself.clear();
+#ifdef MULTI_THREAD
+	s_uTotalNOB = 0;
+#endif
+	// Landscape related data
+	s_uNumOfLines = 0;
+	s_lFileLand.clear();
+}
+ 
 /**
  * Initialize instance of CBug class.
  *
@@ -88,14 +113,35 @@ CBug<Data, iData, Container>::~CBug()
  * @return bool status (success or false)
  */
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
-bool CBug<Data, iData, Container>::OnInit(po::variables_map& mapInputArgs)
+typename CBug<Data, iData, Container>::EFileOpenErrors CBug<Data, iData, Container>::OnInit(std::vector<std::string>::iterator& iBugFile,const std::string& strLandFile)
 {
-	ifstream infilebug(mapInputArgs["bug_file"].as<std::string>()), infilelanscape(mapInputArgs["landscape_file"].as<std::string>());
+	ifstream infilebug(*iBugFile), infilelanscape(strLandFile);
 	Data oneline;
 
-	if (infilebug.fail() || infilelanscape.fail())
-		return false;
+	if (infilebug.fail())
+		return EFileOpenErrors::BUG_FAIL;
+	else if (infilelanscape.fail())
+		return EFileOpenErrors::LANDSCAPE_FAIL;
 
+
+#ifdef _DEBUG
+	if (!s_fDebugTrace.is_open())
+	{
+		string strDebugFile("DebugTrace.txt");
+		s_fDebugTrace.open(strDebugFile.c_str());
+		if (s_fDebugTrace.is_open())
+		{
+			cout << strDebugFile.c_str() << " opened successfully for writing.\n";
+			s_fDebugTrace << "DebugTrace:\n" << "(" << __FILE__ << " : " << __LINE__ << ")  CBug<Data, iData, Container>::OnInit()" << endl;
+		}
+		else
+			return EFileOpenErrors::DEBUG_FAIL;
+	}
+
+#endif
+
+	clearLastSearch();
+	//----------------------BUG------------------------------
 	while (getline(infilebug, oneline))
 	{
 		/**if(oneline.empty())
@@ -122,7 +168,7 @@ bool CBug<Data, iData, Container>::OnInit(po::variables_map& mapInputArgs)
 	infilebug.close();
 	infilelanscape.close();
 
-	return true;
+	return EFileOpenErrors::ALL_SUCCESSFULL;
 }
 
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >

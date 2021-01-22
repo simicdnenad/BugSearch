@@ -3,6 +3,7 @@
 #ifdef _WIN32
 #define NOT_FOUND	string::npos
 #define _CRTDBG_MAP_ALLOC		// for detection of memory leaks
+#define DIR_SEPARATOR '\\'		// directory separator on WIN
 #include <stdlib.h>
 #include <crtdbg.h>				//for malloc and free
 #ifdef _DEBUG
@@ -13,7 +14,9 @@
 #define DBG_NEW new
 #endif
 #elif linux
+#define DIR_SEPARATOR '/'		// directory separator on WIN
 #define NOT_FOUND	-1
+#include <stdexcept>
 #endif
 
 #include <fstream>
@@ -57,12 +60,23 @@ class CBug
 #ifdef SIMPLE_LOG
 	unsigned m_uCurrLine;
 	ofstream m_fWriteFound;
+	string m_sBugName;
+#endif
+#ifdef _DEBUG
+	static ofstream s_fDebugTrace;
 #endif
 public:
-	CBug();
+	CBug(string sBugName);
 	virtual ~CBug();
+	enum class EFileOpenErrors :uint8_t {
+		ALL_SUCCESSFULL = 0x00U,
+		DEBUG_FAIL = 0x01U,
+		LANDSCAPE_FAIL = 0x02U,
+		BUG_FAIL = 0x03U,
+	};
+	static const map<EFileOpenErrors, string> mapFileErrors;
 #ifdef MULTI_THREAD
-	static bool OnInit(po::variables_map& mapInputArgs);
+	static EFileOpenErrors OnInit(std::vector<std::string>::iterator& iBugFile,const std::string& strLandFile);
 	static unsigned GetTotNumOfBugs(){ return s_uTotalNOB;}
 	unsigned GetThreadId() const { return m_uThreadId;}
 	void IncTotNumOfBugs(unsigned int incr)
@@ -71,7 +85,7 @@ public:
 		s_uTotalNOB+=incr;
 	}
 #else
-	bool OnInit(po::variables_map& mapInputArgs);
+	EFileOpenErrors OnInit(std::vector<std::string>::iterator& iBugFile, const std::string& strLandFile);
 #endif
 	void NumOfBugs(unsigned int start_line=0);
 	static unsigned int GetNumOfLines(){return s_uNumOfLines;}
@@ -96,6 +110,7 @@ public:
 	};
 private:
 	vector<Iterator> m_viSearchForBug;
+	static void clearLastSearch();
 };
 
 #include "Bug_impl.hpp"

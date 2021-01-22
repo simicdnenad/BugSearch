@@ -45,14 +45,17 @@ To be able to test application, under "Eclise->Project properties->Run/Debug Set
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
-## Bugfixing/Upgrading.
-Upgrading Bugce:
+## Bugfixing/Upgrading.  
+TODO:  
+1. Add more input Bug files (via Boost program options) and do search for all of them;  
+
+Upgraded:  
 1. Changed to creating thread body on funciton objects instead on method body,  
-2. Added Boost program options for handling input program arguments,  
-3. When i try to replace vector<unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>> => vector<CBug<string, CONTAINER<string>::iterator, CONTAINER>>,
-calling of ~CBug() after vector::push_back(CBug()) is making side effects;
+2. Added Boost program options for handling input program arguments;  
 
+Fixed:  
+1. On Linux platform, string::npos (circa 10pow8) doesn't match return value of std::string::find() in "string not find (-1)" case (under Windows),  
+2. Added finding memory leaks on Windows with the CRT library;  
 
-Fixed:
-1. On Linux platform, string::npos (circa 10pow8) doesn't match return value of std::string::find() in "string not find (-1)" case (under Windows),
-2. Added finding memory leaks on Windows with the CRT library;
+Bugs:
+1. On TAB character inserted as a part of the line in "landscape.txt" file, bug pattern is not found; (it is treated as one char)

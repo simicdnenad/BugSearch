@@ -4,6 +4,8 @@
 #include <time.h>
 #include <vector>
 using namespace std;
+using namespace landscape;
+typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
 
 int main_app(int ac, char** av)
 {
@@ -49,16 +51,16 @@ int main_app(int ac, char** av)
 		{
 			string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR) + 1,
 				(*iBugFilesPaths).rfind('.') - (*iBugFilesPaths).rfind(DIR_SEPARATOR) - 1);
-			CBug<string, CONTAINER<string>::iterator, CONTAINER> bubica(sFileName);
+			CBugT bubica(sFileName);
 
-			if (bubica.OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>()) == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::ALL_SUCCESSFULL)
+			if (bubica.OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>()) == CBugT::EFileOpenErrors::ALL_SUCCESSFULL)
 			{
 				cout << "Input files are correctly opened and loaded in memory." << '\n';
 			}
 			else
 				cout << "Input files are not correctly opened!!!" << '\n';
 
-			cout << "Number of lines:" << (NumOfLines = CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetNumOfLines()) << '\n';
+			cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
 			bubica.NumOfBugs();
 			cout << "Number of found bugs:" << (NumOfLines = bubica.GetNumOfBugs()) << '\n';
 			iBugFilesPaths++;
@@ -66,34 +68,34 @@ int main_app(int ac, char** av)
 #else
 		while (iBugFilesPaths != vBugFilesPaths.end())
 		{
-			CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors eFileOpen;
-			if ((eFileOpen = CBug<string, CONTAINER<string>::iterator, CONTAINER>::OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>())) != CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::ALL_SUCCESSFULL)
+			CBugT::EFileOpenErrors eFileOpen;
+			if ((eFileOpen = CBugT::OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>())) != CBugT::EFileOpenErrors::ALL_SUCCESSFULL)
 			{
-				cout << CBug<string, CONTAINER<string>::iterator, CONTAINER>::mapFileErrors.at(eFileOpen);
-				if (eFileOpen == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::LANDSCAPE_FAIL)
+				cout << CBugT::mapFileErrors.at(eFileOpen);
+				if (eFileOpen == CBugT::EFileOpenErrors::LANDSCAPE_FAIL)
 				{
 					cout << vm["landscape_file"].as<std::string>() << endl;
 					return -1;
 				}
-				else if (eFileOpen == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::BUG_FAIL)
+				else if (eFileOpen == CBugT::EFileOpenErrors::BUG_FAIL)
 					cout << *iBugFilesPaths << endl;
-				else if (eFileOpen == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::DEBUG_FAIL)
-					cout << CBug<string, CONTAINER<string>::iterator, CONTAINER>::s_strDebugFileName << endl;
+				else if (eFileOpen == CBugT::EFileOpenErrors::DEBUG_FAIL)
+					cout << CBugT::s_strDebugFileName << endl;
 				else
 					cout << endl;
 				iBugFilesPaths++;
 				continue;
 			}
 
-			cout << "Number of lines:" << (NumOfLines = CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetNumOfLines()) << '\n';
+			cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
 	
 			string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR)+1,
 				(*iBugFilesPaths).rfind('.')-(*iBugFilesPaths).rfind(DIR_SEPARATOR)-1);
 			vector<std::thread> vThreads;
-			vector<unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>> vupBugs;
+			vector<unique_ptr<CBugT>> vupBugs;
 			for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++)
 			{
-				vupBugs.push_back((unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>)(DBG_NEW CBug<string, CONTAINER<string>::iterator, CONTAINER>(sFileName)));
+				vupBugs.push_back((unique_ptr<CBugT>)(DBG_NEW CBugT(sFileName)));
 				vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
 			}
 
@@ -107,7 +109,7 @@ int main_app(int ac, char** av)
 			}
 			vThreads.erase(vThreads.begin(), vThreads.end());
 			vupBugs.erase(vupBugs.begin(), iupBugs);
-			cout << "Total number of Bugs: " << CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetTotNumOfBugs() << "\n";
+			cout << "Total number of Bugs: " << CBugT::GetTotNumOfBugs() << "\n";
 
 			iBugFilesPaths++;
 		}

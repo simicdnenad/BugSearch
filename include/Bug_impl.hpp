@@ -26,6 +26,8 @@ mutex CBug<Data, iData, Container>::s_mTotalNOB;
 #ifdef _DEBUG
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 ofstream CBug<Data, iData, Container>::s_fDebugTrace;
+template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
+string CBug<Data, iData, Container>::s_strDebugFileName("DebugTraceEmbedded.txt");
 #endif
 template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 const map<typename CBug<Data, iData, Container>::EFileOpenErrors, string> CBug<Data, iData, Container>::mapFileErrors = {
@@ -54,6 +56,13 @@ CBug<Data, iData, Container>::CBug(string sBugName):m_sBugName(sBugName)
 	sPath += ".nfo";
 #elif _WIN32
 	sPath += ".txt";
+#endif
+#ifdef _DEBUG
+		if (s_fDebugTrace.is_open())
+		{
+			s_fDebugTrace <<"(" << __FILE__ << " : " << __LINE__ <<
+				")  CBug<Data, iData, Container>::CBug(string sBugName), m_fWriteFound's sPath=" << sPath.c_str() << endl;
+		}
 #endif
 	m_fWriteFound.open(sPath.c_str());
 	if (m_fWriteFound.is_open())
@@ -127,11 +136,10 @@ typename CBug<Data, iData, Container>::EFileOpenErrors CBug<Data, iData, Contain
 #ifdef _DEBUG
 	if (!s_fDebugTrace.is_open())
 	{
-		string strDebugFile("DebugTrace.txt");
-		s_fDebugTrace.open(strDebugFile.c_str());
+		s_fDebugTrace.open(s_strDebugFileName.c_str());
 		if (s_fDebugTrace.is_open())
 		{
-			cout << strDebugFile.c_str() << " opened successfully for writing.\n";
+			cout << s_strDebugFileName.c_str() << " opened successfully for writing.\n";
 			s_fDebugTrace << "DebugTrace:\n" << "(" << __FILE__ << " : " << __LINE__ << ")  CBug<Data, iData, Container>::OnInit()" << endl;
 		}
 		else

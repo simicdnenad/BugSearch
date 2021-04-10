@@ -62,9 +62,6 @@ class CBug
 	ofstream m_fWriteFound;
 	string m_sBugName;
 #endif
-#ifdef _DEBUG
-	static ofstream s_fDebugTrace;
-#endif
 public:
 	CBug(string sBugName);
 	virtual ~CBug();
@@ -86,6 +83,10 @@ public:
 	}
 #else
 	EFileOpenErrors OnInit(std::vector<std::string>::iterator& iBugFile, const std::string& strLandFile);
+#endif
+#ifdef _DEBUG
+	static ofstream s_fDebugTrace;
+	static string s_strDebugFileName;
 #endif
 	void NumOfBugs(unsigned int start_line=0);
 	static unsigned int GetNumOfLines(){return s_uNumOfLines;}

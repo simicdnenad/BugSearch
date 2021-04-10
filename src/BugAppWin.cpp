@@ -77,6 +77,8 @@ int main_app(int ac, char** av)
 				}
 				else if (eFileOpen == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::BUG_FAIL)
 					cout << *iBugFilesPaths << endl;
+				else if (eFileOpen == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::DEBUG_FAIL)
+					cout << CBug<string, CONTAINER<string>::iterator, CONTAINER>::s_strDebugFileName << endl;
 				else
 					cout << endl;
 				iBugFilesPaths++;

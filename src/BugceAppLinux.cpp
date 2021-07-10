@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <time.h>
 #include <vector>
+using namespace landscape;
+typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
 
 int main(int ac, char** av)
 {
@@ -68,16 +70,16 @@ int main(int ac, char** av)
 #else
 		while (iBugFilesPaths != vBugFilesPaths.end())
 		{
-			CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors eFileOpen;
-			if ((eFileOpen = CBug<string, CONTAINER<string>::iterator, CONTAINER>::OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>())) != CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::ALL_SUCCESSFULL)
+			CBugT::EFileOpenErrors eFileOpen;
+			if ((eFileOpen = CBugT::OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>())) != CBugT::EFileOpenErrors::ALL_SUCCESSFULL)
 			{
-				cout << CBug<string, CONTAINER<string>::iterator, CONTAINER>::mapFileErrors.at(eFileOpen);
-				if (eFileOpen == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::LANDSCAPE_FAIL)
+				cout << CBugT::mapFileErrors.at(eFileOpen);
+				if (eFileOpen == CBugT::EFileOpenErrors::LANDSCAPE_FAIL)
 				{
 					cout << vm["landscape_file"].as<std::string>() << endl;
 					return -1;
 				}
-				else if (eFileOpen == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::BUG_FAIL)
+				else if (eFileOpen == CBugT::EFileOpenErrors::BUG_FAIL)
 					cout << *iBugFilesPaths << endl;
 				else
 					cout << endl;
@@ -85,15 +87,15 @@ int main(int ac, char** av)
 				continue;
 			}
 
-			cout << "Number of lines:" << (NumOfLines = CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetNumOfLines()) << '\n';
+			cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
 	
 			string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR)+1,
 				(*iBugFilesPaths).rfind('.')-(*iBugFilesPaths).rfind(DIR_SEPARATOR)-1);
 			vector<std::thread> vThreads;
-			vector<unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>> vupBugs;
+			vector<unique_ptr<CBugT>> vupBugs;
 			for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++)
 			{
-				vupBugs.push_back((unique_ptr<CBug<string, CONTAINER<string>::iterator, CONTAINER>>)(new CBug<string, CONTAINER<string>::iterator, CONTAINER>(sFileName)));
+				vupBugs.push_back((unique_ptr<CBugT>)(new CBugT(sFileName)));
 				vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
 			}
 
@@ -107,7 +109,7 @@ int main(int ac, char** av)
 			}
 			vThreads.erase(vThreads.begin(), vThreads.end());
 			vupBugs.erase(vupBugs.begin(), iupBugs);
-			cout << "Total number of Bugs: " << CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetTotNumOfBugs() << "\n";
+			cout << "Total number of Bugs: " << CBugT::GetTotNumOfBugs() << "\n";
 
 			iBugFilesPaths++;
 		}

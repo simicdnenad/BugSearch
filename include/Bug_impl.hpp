@@ -70,7 +70,7 @@ namespace landscape
 		if (m_fWriteFound.is_open())
 		{
 			cout << sPath.c_str() << " opened successfully for writing.\n";
-			m_fWriteFound << "This is the file for logging founded Bug patterns ("
+			m_fWriteFound << "This is the file for logging found Bug patterns (ThreadID="
 #ifdef MULTI_THREAD
 				<< m_uThreadId
 #endif

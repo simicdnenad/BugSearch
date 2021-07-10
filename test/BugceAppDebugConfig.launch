@@ -2,7 +2,7 @@
 <launchConfiguration type="org.eclipse.cdt.launch.applicationLaunchType">
 <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="2"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_START_MODE" value="run"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_ARGUMENTS" value="../github-upload/test/bug.txt &#10;../github-upload/test/landscape.txt"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_ARGUMENTS" value="--bug_file ../Bug_search/test/bug.txt&#10;--landscape_file ../Bug_search/test/landscape.txt"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="BugceApp"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="build"/>
 <booleanAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_AUTO_ATTR" value="false"/>

@@ -15,32 +15,32 @@ Boost 1.65.1,
 
 ## Development
 Clone repo with:  
-1. git clone https://github.com/simicdnenad/github-upload.git,  
+1. git clone https://github.com/simicdnenad/Bug_search.git,  
 2. Create /build folder in sibling folder of cloned repo;  
 ### Under Linux:
 Generate Eclipse project file (to be able to Debug project from Eclipse IDE):  
-1. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../github-upload/ ;  
+1. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../Bug_search/ ;  
 
 ### Under Windows: 
 1. Add Environment Variable: BOOST_ROOT (e.g. "C:\Program Files\boost\boost_1_65_1"),  
-2. Generate VS2017 project file: Run $cmake -G"Visual Studio 15 2017 Win64" ../github-upload/;  
+2. Generate VS2017 project file: Run $cmake -G"Visual Studio 15 2017 Win64" ../Bug_search/;  
 
 ## Testing
 ### Under Linux:
 ### Under Eclipse IDE
 To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:  
---bug_file ../github-upload/test/bug.txt  
---landscape_file ../github-upload/test/landscape.txt  
+--bug_file ../Bug_search/test/bug.txt  
+--landscape_file ../Bug_search/test/landscape.txt  
 (or File->Import->Run/Debug->Launch Configurations "/test/BugceAppDebugConfig.launch")
 ### From command line
 1. Go to /build folder,  
 2. $make -f Makefile,  
-3. $./BugceAppLinux --bug_file ../github-upload/test/bug.txt --landscape_file ../github-upload/test/landscape.txt;  
+3. $./BugceAppLinux --bug_file ../Bug_search/test/bug.txt --landscape_file ../Bug_search/test/landscape.txt;  
 
 ### Under Windows:
 ### Under VS2017 IDE:
 1. To be able to test application, under "Project Properties->Debugging->Command Arguments add (apsolute paths):
---bug_file "D:\\Bugce\\github-upload\\test\\bug.txt"   --landscape_file "D:\\Bugce\\github-upload\\test\\landscape.txt"  
+--bug_file "D:\\Bugce\\Bug_search\\test\\bug.txt"   --landscape_file "D:\\Bugce\\Bug_search\\test\\landscape.txt"  
 2. In same panel edit "WorkingDirectory"=$(ProjectDir)\Debug;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------

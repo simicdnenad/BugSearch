@@ -21,10 +21,10 @@ add_definitions(-DSIMPLE_LOG -DCHECK_TIME -DMULTI_THREAD)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include)
 if (UNIX)
-FILE(GLOB SRC_FILES "src/*Linux.cpp")
+FILE(GLOB SRC_FILES "src/*Linux.cpp" "src/Logger_thread.cpp")
 ENDIF()
 if (WIN32)
-FILE(GLOB SRC_FILES "src/*Win.cpp")
+FILE(GLOB SRC_FILES "src/*Win.cpp" "src/Logger_thread.cpp")
 ENDIF()
 #ADD_LIBRARY(BugceLib "src/Bug.cpp")
 #SET_TARGET_PROPERTIES(BugceLib PROPERTIES ARCHIVE_OUTPUT_DIRECTORY 

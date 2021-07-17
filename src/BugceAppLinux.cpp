@@ -24,14 +24,7 @@ int main(int ac, char** av)
 		begin = clock();
 #endif
 		po::store(po::parse_command_line(ac, av, desc), vm);
-		vector<string> vBugFilesPaths;
-		if (!vm["bug_file(s)"].empty())
-			vBugFilesPaths = vm["bug_file(s)"].as<vector<string> >();
-		else
-		{
-		    std::logic_error e("No Bug(s) file paths provided!");
-		    throw std::exception(e);
-		}
+		vector<string> vBugFilesPaths = vm["bug_file(s)"].as<vector<string> >();
 
 		std::cout << "Inputed arguments are:" << endl;
 		auto iBugFilesPaths = vBugFilesPaths.begin();

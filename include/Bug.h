@@ -43,6 +43,7 @@ namespace po = boost::program_options;
 #define LINES_PER_THREAD		1000000			// MAX_NUMOF_LINES
 #endif
 
+
 namespace landscape {
 
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
@@ -72,6 +73,7 @@ namespace landscape {
 			DEBUG_FAIL = 0x01U,
 			LANDSCAPE_FAIL = 0x02U,
 			BUG_FAIL = 0x03U,
+			LOG_FAIL = 0x04U
 		};
 		static const map<EFileOpenErrors, string> mapFileErrors;
 #ifdef MULTI_THREAD

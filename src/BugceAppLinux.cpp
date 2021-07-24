@@ -4,7 +4,6 @@
 #include <time.h>
 #include <vector>
 using namespace landscape;
-typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
 
 int main(int ac, char** av)
 {

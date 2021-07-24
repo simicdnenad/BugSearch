@@ -1,6 +1,7 @@
 #pragma once
 namespace landscape
 {
+	using CBugT = CBug<string, CONTAINER<string>::iterator, CONTAINER>;
 	////////////////////// static fields
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	vector<iData> CBug<Data, iData, Container>::s_viBugItself;

@@ -84,7 +84,6 @@ namespace landscape
 		else
 			cout << "Unable to open" << sPath.c_str() << "file! \n";
 #endif
-
 	}
 
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
@@ -97,6 +96,8 @@ namespace landscape
 #ifdef SIMPLE_LOG
 			if (m_fWriteFound.is_open())
 				m_fWriteFound.close();
+#else
+			;
 #endif
 	}
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
@@ -136,7 +137,7 @@ namespace landscape
 			return EFileOpenErrors::LANDSCAPE_FAIL;
 
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(SIMPLE_LOG)
 		if (!s_fDebugTrace.is_open())
 		{
 			s_fDebugTrace.open(s_strDebugFileName.c_str());

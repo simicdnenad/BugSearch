@@ -61,9 +61,11 @@ namespace landscape {
 		bool SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_from, unsigned int currbugdim);
 		unsigned MaxBugPart(unsigned dim);
 #ifdef SIMPLE_LOG
-		unsigned m_uCurrLine;
 		ofstream m_fWriteFound;
+#endif
+#if defined(SIMPLE_LOG) || defined(LOGGER_AS_THREAD)
 		string m_sBugName;
+		unsigned m_uCurrLine;
 #endif
 	public:
 		CBug(string sBugName);
@@ -95,6 +97,9 @@ namespace landscape {
 		void NumOfBugs(unsigned int start_line = 0);
 		static unsigned int GetNumOfLines() { return s_uNumOfLines; }
 		unsigned int GetNumOfBugs() const { return m_uNumOfBugs; }
+#if defined(SIMPLE_LOG) || defined(LOGGER_AS_THREAD)
+		const string& GetBugName() const {return m_sBugName;}
+#endif
 		void operator()(unsigned int start_line)			// implement as functor
 		{
 			NumOfBugs(start_line);

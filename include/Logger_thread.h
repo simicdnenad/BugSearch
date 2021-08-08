@@ -16,18 +16,19 @@ using namespace std;
 namespace landscape{
 
 	class CLoggerThread {
-
+		map<unsigned,std::tuple<string, ofstream>> m_mapThreadsLogFiles;
+		map<unsigned,CONTAINER<string>> m_mapThreadsBuffers;
+		string m_sBugName;
+	public:
 		using EFileOpenErrors = landscape::CBugT::EFileOpenErrors;
 
-		CLoggerThread(string sBugName);
+		CLoggerThread(string sBugName="");
 		virtual ~CLoggerThread();
 		void init();
 		EFileOpenErrors  AddBufferAndFile(unsigned uThreadId=0);
 		void log(const unsigned uLogId, const char *const file, int const line, const char *const fmt, ...);
-	private:
-		map<unsigned,std::tuple<string, ofstream>> m_mapThreadsLogFiles;
-		map<unsigned,CONTAINER<string>> m_mapThreadsBuffers;
-		string m_sBugName;
+		void assignName(const string& bugName){m_sBugName.assign(bugName);}
+		const string& getBugName()const{ return m_sBugName;}
 
 	};
 

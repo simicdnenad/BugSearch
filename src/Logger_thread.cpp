@@ -65,18 +65,18 @@ namespace landscape
 				<< uThreadId
 #endif
 				<< ").\n";
-			return EFileOpenErrors::ALL_SUCCESSFULL;
-		}
-		else
-			return EFileOpenErrors::LOG_FAIL;
 #ifdef NOTDEF
 			get<1>(it->second)<< "Bug pattern:\n";
 			for (unsigned int i = 0; i < s_uBugDimNum; i++)
 				get<1>(it->second) << (*s_viBugItself[i]) << '\n';
+#endif
+			return EFileOpenErrors::ALL_SUCCESSFULL;
 		}
 		else
+		{
 			cout << "Unable to open" << sPath.c_str() << "file! \n";
-#endif
+			return EFileOpenErrors::LOG_FAIL;
+		}
 	}
 
 

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <time.h>
 #include <vector>
+#include <Logger_thread.h>
 using namespace landscape;
 
 int main(int ac, char** av)
@@ -60,6 +61,10 @@ int main(int ac, char** av)
 			iBugFilesPaths++;
 		}
 #else
+#ifdef LOGGER_AS_THREAD
+		CLoggerThread LoggerThread;
+#endif
+
 		while (iBugFilesPaths != vBugFilesPaths.end())
 		{
 			CBugT::EFileOpenErrors eFileOpen;
@@ -88,6 +93,11 @@ int main(int ac, char** av)
 			for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++)
 			{
 				vupBugs.push_back((unique_ptr<CBugT>)(new CBugT(sFileName)));
+#ifdef LOGGER_AS_THREAD
+				if(LoggerThread.getBugName().compare("")==0)
+					LoggerThread.assignName(vupBugs.back()->GetBugName());
+				LoggerThread.AddBufferAndFile(vupBugs.back()->GetThreadId());
+#endif
 				vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
 			}
 

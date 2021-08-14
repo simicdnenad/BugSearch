@@ -1,0 +1,218 @@
+[33mcommit 71627045c50d6f1768ed94bcc03b88e66918142c[m[33m ([m[1;36mHEAD -> [m[1;32mlogger_as_thread[m[33m)[m
+Author: Simic Nenad <simicdnenad@gmail.com>
+Date:   Sat Aug 14 02:25:57 2021 +0200
+
+    Implementing logger as separate thread. (1.4) -- Added separate buffer for every processing thread
+
+[1mdiff --git a/include/Logger_thread.h b/include/Logger_thread.h[m
+[1mindex 417d8f8..4d70a22 100644[m
+[1m--- a/include/Logger_thread.h[m
+[1m+++ b/include/Logger_thread.h[m
+[36m@@ -9,6 +9,7 @@[m
+ #define LOGGER_THREAD_H_[m
+ [m
+ #include <map>[m
+[32m+[m
+ #include "Bug.h"[m
+ [m
+ using namespace std;[m
+[36m@@ -16,8 +17,16 @@[m [musing namespace std;[m
+ namespace landscape{[m
+ [m
+ 	class CLoggerThread {[m
+[32m+[m		[32mstruct CLoggerData{[m
+[32m+[m			[32mCLoggerData():m_bShouldFlash(false){}[m
+[32m+[m			[32mCLoggerData(const CLoggerData& LoggerData){}							// implemented CopyConstructor due to error when inserting class object into a STL map[m
+[32m+[m			[32mCONTAINER<string> m_LogBuffer;[m
+[32m+[m			[32mmutex m_mutexBuffer;[m
+[32m+[m			[32mbool m_bShouldFlash;[m
+[32m+[m		[32m};[m
+[32m+[m
+ 		map<unsigned,std::tuple<string, ofstream>> m_mapThreadsLogFiles;[m
+[31m-		map<unsigned,CONTAINER<string>> m_mapThreadsBuffers;[m
+[32m+[m		[32mmap<unsigned,CLoggerData> m_mapThreadsBuffers;[m
+ 		string m_sBugName;[m
+ 	public:[m
+ 		using EFileOpenErrors = landscape::CBugT::EFileOpenErrors;[m
+[36m@@ -26,10 +35,10 @@[m [mnamespace landscape{[m
+ 		virtual ~CLoggerThread();[m
+ 		void init();[m
+ 		EFileOpenErrors  AddBufferAndFile(unsigned uThreadId=0);[m
+[32m+[m		[32mvoid init(string sBugName,unsigned uNumOfThreads);[m
+ 		void log(const unsigned uLogId, const char *const file, int const line, const char *const fmt, ...);[m
+ 		void assignName(const string& bugName){m_sBugName.assign(bugName);}[m
+ 		const string& getBugName()const{ return m_sBugName;}[m
+[31m-[m
+ 	};[m
+ [m
+ #define LOG(ThreadID, ...) CLoggerThread::log(ThreadID, __FILE__, __LINE__, __VA_ARGS__)[m
+[1mdiff --git a/src/BugceAppLinux.cpp b/src/BugceAppLinux.cpp[m
+[1mindex 712ce99..8c2f69e 100644[m
+[1m--- a/src/BugceAppLinux.cpp[m
+[1m+++ b/src/BugceAppLinux.cpp[m
+[36m@@ -88,6 +88,9 @@[m [mint main(int ac, char** av)[m
+ 	[m
+ 			string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR)+1,[m
+ 				(*iBugFilesPaths).rfind('.')-(*iBugFilesPaths).rfind(DIR_SEPARATOR)-1);[m
+[32m+[m[32m#ifdef LOGGER_AS_THREAD[m
+[32m+[m			[32mLoggerThread.init(sFileName,NumOfLines/LINES_PER_THREAD+1);[m
+[32m+[m[32m#endif[m
+ 			vector<std::thread> vThreads;[m
+ 			vector<unique_ptr<CBugT>> vupBugs;[m
+ 			for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++)[m
+[1mdiff --git a/src/Logger_thread.cpp b/src/Logger_thread.cpp[m
+[1mindex 7daa845..b2e4481 100644[m
+[1m--- a/src/Logger_thread.cpp[m
+[1m+++ b/src/Logger_thread.cpp[m
+[36m@@ -53,6 +53,8 @@[m [mnamespace landscape[m
+ 				return EFileOpenErrors::DEBUG_FAIL;[m
+ 		}[m
+ #endif[m
+[32m+[m[32m//		CLoggerData dataLocal;[m
+[32m+[m		[32mm_mapThreadsBuffers.insert(pair<unsigned,CLoggerData>(uThreadId,CLoggerData()));[m
+ 		m_mapThreadsLogFiles.insert(pair<unsigned,std::tuple<string, ofstream>>(uThreadId,make_tuple(sPath,ofstream())));[m
+ 		it = m_mapThreadsLogFiles.find(uThreadId);[m
+ 		get<1>(it->second).open(get<0>(it->second));[m
+[36m@@ -80,83 +82,72 @@[m [mnamespace landscape[m
+ 	}[m
+ [m
+ [m
+[31m-	void CLoggerThread::init()[m
+[32m+[m	[32mvoid CLoggerThread::init(string sBugName,unsigned uNumOfThreads)[m
+ 	{[m
+[31m-#ifdef NOTDEF[m
+[31m-		m_fWriteFound.open(m_sPath);[m
+[31m-		if (m_fWriteFound.is_open())[m
+[31m-		{[m
+[31m-			cout << sPath.c_str() << " opened successfully for writing.\n";[m
+[31m-			m_fWriteFound << "This is the file for logging found Bug patterns (ThreadID="[m
+[31m-#ifdef MULTI_THREAD[m
+[31m-				<< m_uThreadId[m
+[31m-#endif[m
+[31m-				<< ").\n";[m
+[31m-[m
+[31m-			m_fWriteFound << "Bug pattern:\n";[m
+[31m-			for (unsigned int i = 0; i < s_uBugDimNum; i++)[m
+[31m-				m_fWriteFound << (*s_viBugItself[i]) << '\n';[m
+[31m-		}[m
+[31m-		else[m
+[31m-			cout << "Unable to open" << sPath.c_str() << "file! \n";[m
+[31m-#endif[m
+[32m+[m		[32mif(getBugName().compare("")==0)[m
+[32m+[m			[32massignName(sBugName);[m
+[32m+[m		[32mfor (unsigned int i = 0; i < uNumOfThreads; i++)[m
+[32m+[m			[32mAddBufferAndFile(i);[m
+ 	}[m
+ [m
+ 	void CLoggerThread::log(const unsigned uLogId, const char *const file, int const line, const char *const fmt, ...) {[m
+[31m-	  assert(fmt != nullptr);[m
+[31m-	  std::array<char, 512> buffer;[m
+[31m-[m
+[31m-	  const char *file_name = file;[m
+[31m-	  if (file != nullptr) {[m
+[31m-	    const char *const substr = strrchr(file, '/');[m
+[31m-	    if (substr != nullptr) {[m
+[31m-	      file_name = substr+1; // Point to first character after slash[m
+[31m-	    }[m
+[31m-	  }[m
+[31m-	  else {[m
+[31m-	    file_name = "<unknown>";[m
+[31m-	  }[m
+[32m+[m		[32mstd::lock_guard<std::mutex> guard(m_mapThreadsBuffers.find(uLogId)->second.m_mutexBuffer);[m
+[32m+[m		[32massert(fmt != nullptr);[m
+[32m+[m		[32mstd::array<char, 512> buffer;[m
+[32m+[m
+[32m+[m		[32mconst char *file_name = file;[m
+[32m+[m		[32mif (file != nullptr) {[m
+[32m+[m			[32mconst char *const substr = strrchr(file, '/');[m
+[32m+[m			[32mif (substr != nullptr) {[m
+[32m+[m				[32mfile_name = substr+1; // Point to first character after slash[m
+[32m+[m			[32m}[m
+[32m+[m		[32m}[m
+[32m+[m		[32melse {[m
+[32m+[m			[32mfile_name = "<unknown>";[m
+[32m+[m		[32m}[m
+ #ifdef NOTDEF[m
+[31m-	  // Calculate timestamp of message[m
+[31m-	  uint16_t year;[m
+[31m-	  uint8_t month;[m
+[31m-	  uint8_t day;[m
+[31m-	  uint8_t print_h;[m
+[31m-	  uint8_t print_m;[m
+[31m-	  uint8_t print_s;[m
+[31m-	  uint16_t print_ms;[m
+[31m-	  time.getTimeParts(year, month, day, print_h, print_m, print_s, print_ms);[m
+[32m+[m		[32m// Calculate timestamp of message[m
+[32m+[m		[32muint16_t year;[m
+[32m+[m		[32muint8_t month;[m
+[32m+[m		[32muint8_t day;[m
+[32m+[m		[32muint8_t print_h;[m
+[32m+[m		[32muint8_t print_m;[m
+[32m+[m		[32muint8_t print_s;[m
+[32m+[m		[32muint16_t print_ms;[m
+[32m+[m		[32mtime.getTimeParts(year, month, day, print_h, print_m, print_s, print_ms);[m
+ #endif[m
+ [m
+[31m-	  int written_size[m
+[31m-	    = std::snprintf(buffer.data(), buffer.size(), /**[%02d:%02d:%02d.%03d]*/"[%s:%d]"/** %s: */, /**print_h, print_m, print_s, print_ms,*/ file_name, line/**, level_string*/);[m
+[31m-	  if (0 <= written_size) {[m
+[31m-	    if (static_cast<std::size_t>(written_size + 1) < buffer.size()) {[m
+[31m-	      std::va_list args;[m
+[31m-	      va_start(args, fmt);[m
+[31m-	      const int add_written_size = std::vsnprintf(&buffer.at(written_size), buffer.size() - written_size, fmt, args);[m
+[31m-	      va_end(args);[m
+[31m-[m
+[31m-	      if (0 <= add_written_size) {[m
+[31m-	        written_size += add_written_size;[m
+[31m-	      }[m
+[31m-	    }[m
+[31m-[m
+[31m-	    std::size_t end_index = std::min(static_cast<std::size_t>(written_size), buffer.size() - 3);[m
+[31m-	    buffer.at(end_index++) = '\r';[m
+[31m-	    buffer.at(end_index++) = '\n';[m
+[31m-	    buffer.at(end_index) = '\0';[m
+[31m-[m
+[31m-	    auto iBuff = m_mapThreadsBuffers.find(uLogId);[m
+[31m-[m
+[31m-	    if(iBuff!=m_mapThreadsBuffers.end())[m
+[31m-	    {[m
+[31m-	    	iBuff->second.push_back(buffer.data());[m
+[31m-	    }[m
+[31m-	    else[m
+[31m-	    	return;[m
+[31m-[m
+[31m-	  }[m
+[32m+[m		[32mint written_size[m
+[32m+[m		[32m= std::snprintf(buffer.data(), buffer.size(), /**[%02d:%02d:%02d.%03d]*/"[%s:%d]"/** %s: */, /**print_h, print_m, print_s, print_ms,*/ file_name, line/**, level_string*/);[m
+[32m+[m		[32mif (0 <= written_size) {[m
+[32m+[m		[32mif (static_cast<std::size_t>(written_size + 1) < buffer.size()) {[m
+[32m+[m			[32mstd::va_list args;[m
+[32m+[m			[32mva_start(args, fmt);[m
+[32m+[m			[32mconst int add_written_size = std::vsnprintf(&buffer.at(written_size), buffer.size() - written_size, fmt, args);[m
+[32m+[m			[32mva_end(args);[m
+[32m+[m
+[32m+[m			[32mif (0 <= add_written_size) {[m
+[32m+[m				[32mwritten_size += add_written_size;[m
+[32m+[m			[32m}[m
+[32m+[m		[32m}[m
+[32m+[m
+[32m+[m		[32mstd::size_t end_index = std::min(static_cast<std::size_t>(written_size), buffer.size() - 3);[m
+[32m+[m		[32mbuffer.at(end_index++) = '\r';[m
+[32m+[m		[32mbuffer.at(end_index++) = '\n';[m
+[32m+[m		[32mbuffer.at(end_index) = '\0';[m
+[32m+[m
+[32m+[m		[32mauto iBuff = m_mapThreadsBuffers.find(uLogId);[m
+[32m+[m
+[32m+[m		[32mif(iBuff!=m_mapThreadsBuffers.end())[m
+[32m+[m		[32m{[m
+[32m+[m			[32miBuff->second.m_LogBuffer.push_back(buffer.data());[m
+[32m+[m			[32mif(iBuff->second.m_LogBuffer.size() > 1000)									// start logging as soon there is more than 1000 chars[m
+[32m+[m				[32miBuff->second.m_bShouldFlash=true;[m
+[32m+[m		[32m}[m
+[32m+[m		[32melse[m
+[32m+[m			[32mreturn;[m
+[32m+[m
+[32m+[m		[32m}[m
+ 	}[m
+ }[m
+ [m

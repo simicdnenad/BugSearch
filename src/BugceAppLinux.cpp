@@ -88,6 +88,9 @@ int main(int ac, char** av)
 	
 			string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR)+1,
 				(*iBugFilesPaths).rfind('.')-(*iBugFilesPaths).rfind(DIR_SEPARATOR)-1);
+#ifdef LOGGER_AS_THREAD
+			LoggerThread.init(sFileName,NumOfLines/LINES_PER_THREAD+1);
+#endif
 			vector<std::thread> vThreads;
 			vector<unique_ptr<CBugT>> vupBugs;
 			for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++)

@@ -32,9 +32,7 @@ Generate Eclipse project file (to be able to Debug project from Eclipse IDE):
 --landscape_file ../Bug_search/test/landscape.txt  
 (or File->Import->Run/Debug->Launch Configurations "/test/BugceAppDebugConfig.launch")
 #### From command line
-1. Go to /build folder,  
-2. Build project with: $make -f Makefile,  
-3. Run app with: $./BugceAppLinux --bug_file ../Bug_search/test/bug.txt --landscape_file ../Bug_search/test/landscape.txt;  
+1. Run script $Bug_search/test/linux_test.sh;  
 
 ### Under Windows:
 #### Under VS2017 IDE:

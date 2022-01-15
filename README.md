@@ -1,6 +1,6 @@
-# Bugce
+# SearchBug
 
-Small application which is searching throught "/test/landscape.txt" file for a multiline string pattern from "/test/bug.txt".
+Small application which is searching throught "/test/landscape.txt" file for a multiline string pattern from "/test/bug.txt" file.
 
 ## Prerequisities (Tested on)
 18.04.1-Ubuntu (Debian),  
@@ -14,11 +14,11 @@ Boost 1.65.1;
 
 ## Compilation
 Clone repo with:  
-1. $git clone https://github.com/simicdnenad/Bug_search.git,  
+1. $git clone https://github.com/simicdnenad/BugSearch.git,  
 2. Create /build folder in sibling folder of cloned repo;  
 ### Under Linux:
-Generate Eclipse project file (to be able to Debug project from Eclipse IDE):  
-1. Run $cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ../Bug_search/ ;  
+1. Define global variable "BugSearchRepoDir" with content of directory path of cloned repo (e.g. $export BugSearchRepoDir=/home/nenad/Desktop/workspace_work/BugSearchRepo/BugSearch),  
+1. Run script $Bug_search/test/linux_test.sh;  
 
 ### Under Windows: 
 1. Add Environment Variable: BOOST_ROOT (e.g. "C:\Program Files\boost\boost_1_65_1"),  

@@ -1,4 +1,4 @@
-# SearchBug
+# BugSearch
 
 Small application which is searching throught "/test/landscape.txt" file for a multiline string pattern from "/test/bug.txt" file.
 
@@ -18,7 +18,7 @@ Clone repo with:
 2. Create /build folder in sibling folder of cloned repo;  
 ### Under Linux:
 1. Define global variable "BugSearchRepoDir" with content of directory path of cloned repo (e.g. $export BugSearchRepoDir=/home/nenad/Desktop/workspace_work/BugSearchRepo/BugSearch),  
-1. Run script $Bug_search/test/linux_test.sh;  
+1. Run script $BugSearchRepoDir/test/linux_test.sh;  
 
 ### Under Windows: 
 1. Add Environment Variable: BOOST_ROOT (e.g. "C:\Program Files\boost\boost_1_65_1"),  

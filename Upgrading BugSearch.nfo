@@ -1,0 +1,4 @@
+Upgrading BugSearch:
+1. Add auto f1 = std::async(&Test::calculate, this, 11, 20);
+       auto res1 = f1.get();
+   for fetching results from thread. Try (only for training) std::future and std::promise things...,

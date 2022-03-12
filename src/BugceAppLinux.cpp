@@ -13,8 +13,8 @@ int main(int ac, char** av)
 
 	// declare arguments (boost)
 	desc.add_options()
-		("bug_file(s)", po::value<vector<string>>()->multitoken(), "Provide relative path to \"bug.txt\" file(s)")
-		("landscape_file", po::value<std::string>()->required(), "Provide relative path to \"landscape.txt\" file");
+		("bug_file(s)", po::value<vector<string>>()->multitoken(), "Provide relative path to \"bug.nfo\" file(s)")
+		("landscape_file", po::value<std::string>()->required(), "Provide relative path to \"landscape.nfo\" file");
 	try 
 	{
 		unsigned int NumOfLines = 0;

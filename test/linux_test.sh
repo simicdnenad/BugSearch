@@ -39,7 +39,7 @@ function build_app()
 function run_app()
 {
   echo "Running app."
-  ${BugSearchRepoDir}/../build/BugceAppLinux --bug_file ${BugSearchRepoDir}/test/bug.txt --landscape_file ${BugSearchRepoDir}/test/landscape.txt
+  ${BugSearchRepoDir}/../build/BugceAppLinux --bug_file ${BugSearchRepoDir}/test/bug.nfo --landscape_file ${BugSearchRepoDir}/test/landscape.nfo
 }
 
 function main()

@@ -54,11 +54,7 @@ namespace landscape
 		m_uCurrLine = 1;
 		string sPath = "WriteFound" + m_sBugName;
 #endif
-#ifdef linux
 		sPath += ".nfo";
-#elif _WIN32
-		sPath += ".txt";
-#endif
 #ifdef _DEBUG
 		if (s_fDebugTrace.is_open())
 		{
@@ -188,7 +184,7 @@ namespace landscape
 		for (unsigned int i = 0; i < s_uBugDimNum && i + processed_line < GetNumOfLines(); i++)
 			m_viSearchForBug.push_back(Iterator(*this, start_line + i, start_line + LINES_PER_THREAD + i));
 		if (processed_line + s_uBugDimNum > GetNumOfLines())
-			return; 																// landscape.txt file is too small.
+			return; 																// landscape.nfo file is too small.
 
 		while (processed_line < (start_line + LINES_PER_THREAD - s_uBugDimNum + 1) && processed_line < (GetNumOfLines() - s_uBugDimNum + 1))
 		{

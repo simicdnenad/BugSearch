@@ -1,6 +1,6 @@
 # BugSearch
 
-Small application which is searching throught "/test/landscape.txt" file for a multiline string pattern from "/test/bug.txt" file.
+Small application which is searching throught "/test/landscape.nfo" file for a multiline string pattern from "/test/bug.nfo" file.
 
 ## Prerequisities (Tested on)
 18.04.1-Ubuntu (Debian),  
@@ -28,8 +28,8 @@ Clone repo with:
 ### Under Linux:
 #### Under Eclipse IDE
 1. To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:  
---bug_file ../Bug_search/test/bug.txt  
---landscape_file ../Bug_search/test/landscape.txt  
+--bug_file ../Bug_search/test/bug.nfo  
+--landscape_file ../Bug_search/test/landscape.nfo  
 (or File->Import->Run/Debug->Launch Configurations "/test/BugceAppDebugConfig.launch")
 #### From command line
 1. Run script $Bug_search/test/linux_test.sh;  
@@ -37,7 +37,7 @@ Clone repo with:
 ### Under Windows:
 #### Under VS2017 IDE:
 1. Under "Project Properties->Debugging->Command Arguments add (apsolute paths):
---bug_file "D:\\Bugce\\Bug_search\\test\\bug.txt"   --landscape_file "D:\\Bugce\\Bug_search\\test\\landscape.txt"  
+--bug_file "D:\\Bugce\\Bug_search\\test\\bug.nfo"   --landscape_file "D:\\Bugce\\Bug_search\\test\\landscape.nfo"  
 2. In same panel edit "WorkingDirectory"=$(ProjectDir)\Debug;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -55,4 +55,4 @@ Fixed:
 2. Added finding of memory leaks on Windows with the CRT library;  
 
 Bugs:
-1. On TAB character inserted as a part of the line in "landscape.txt" file, bug pattern is not found; (it is treated as one character)  
+1. On TAB character inserted as a part of the line in "landscape.nfo" file, bug pattern is not found; (it is treated as one character)  

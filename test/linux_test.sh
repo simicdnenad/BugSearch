@@ -5,12 +5,12 @@
 #
 
 SYSTEM="uname"
-TARGET="${BugSearchRepoDir}/../build/BugceAppLinux"
+TARGET="${BUGSEARCH_BASE}/../build/BugceAppLinux"
 
 function create_build_dir() {
-  if [ ! -r "${BugSearchRepoDir}/../build" ]; then
+  if [ ! -r "${BUGSEARCH_BASE}/../build" ]; then
     echo "Creating /build folder in sibling folder of cloned repo"
-    mkdir ${BugSearchRepoDir}/../build
+    mkdir ${BUGSEARCH_BASE}/../build
   fi
 }
 
@@ -29,9 +29,9 @@ EOF
 
 function build_app()
 {
-  cd ${BugSearchRepoDir}/../build
+  cd ${BUGSEARCH_BASE}/../build
   echo "Generating Eclipse project file"
-  cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ${BugSearchRepoDir}
+  cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ${BUGSEARCH_BASE}
   echo "Building project"
   make -f Makefile
 }
@@ -39,7 +39,7 @@ function build_app()
 function run_app()
 {
   echo "Running app."
-  ${BugSearchRepoDir}/../build/BugceAppLinux --bug_file ${BugSearchRepoDir}/test/bug.nfo --landscape_file ${BugSearchRepoDir}/test/landscape.nfo
+  ${BUGSEARCH_BASE}/../build/BugceAppLinux --bug_file ${BUGSEARCH_BASE}/test/bug.nfo --landscape_file ${BUGSEARCH_BASE}/test/landscape.nfo
 }
 
 function main()

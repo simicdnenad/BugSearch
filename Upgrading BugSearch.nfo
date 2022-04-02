@@ -1,4 +1,3 @@
-Upgrading BugSearch:
-1. Add auto f1 = std::async(&Test::calculate, this, 11, 20);
-       auto res1 = f1.get();
-   for fetching results from thread. Try (only for training) std::future and std::promise things...,
+version https://git-lfs.github.com/spec/v1
+oid sha256:37902c7847eba8474ebf6c0761383aac503eaef70f668e50511af30da9b3826e
+size 212

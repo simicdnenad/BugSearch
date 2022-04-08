@@ -5,7 +5,7 @@
 #
 
 SYSTEM="uname"
-TARGET="${BUGSEARCH_BASE}/../build/BugceAppLinux"
+TARGET="${BUGSEARCH_BASE}/../build/BugSearchLinux"
 
 function create_build_dir() {
   if [ ! -r "${BUGSEARCH_BASE}/../build" ]; then
@@ -39,7 +39,7 @@ function build_app()
 function run_app()
 {
   echo "Running app."
-  ${BUGSEARCH_BASE}/../build/BugceAppLinux --bug_file ${BUGSEARCH_BASE}/test/bug.nfo --landscape_file ${BUGSEARCH_BASE}/test/landscape.nfo
+  $TARGET --bug_file ${BUGSEARCH_BASE}/test/bug.nfo --landscape_file ${BUGSEARCH_BASE}/test/landscape.nfo
 }
 
 function main()

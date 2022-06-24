@@ -39,7 +39,7 @@ function build_app()
 function run_app()
 {
   echo "Running app."
-  $TARGET --bug_file ${BUGSEARCH_BASE}/test/bug.nfo --landscape_file ${BUGSEARCH_BASE}/test/landscape.nfo
+  $TARGET --bug_file ${BUGSEARCH_BASE}/manual_test/bug.nfo --landscape_file ${BUGSEARCH_BASE}/manual_test/landscape.nfo
 }
 
 function main()

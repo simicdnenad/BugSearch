@@ -33,5 +33,5 @@
 
 # Unnecessary directories
 build/
-lib/
+#lib/
 /.metadata/

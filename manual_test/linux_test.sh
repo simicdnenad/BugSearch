@@ -5,7 +5,7 @@
 #
 
 SYSTEM="uname"
-TARGET="${BUGSEARCH_BASE}/../build/BugSearchLinux"
+TARGET="${BUGSEARCH_BASE}/../build/src/BugSearchLinux"
 
 function create_build_dir() {
   if [ ! -r "${BUGSEARCH_BASE}/../build" ]; then

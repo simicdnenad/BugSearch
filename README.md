@@ -31,7 +31,7 @@ Clone repo with:
 --landscape_file ../Bug_search/manual_test/landscape.nfo  
 (or File->Import->Run/Debug->Launch Configurations "/manual_test/BugceAppDebugConfig.launch")
 #### From command line
-1. Run script $Bug_search/manual_test/linux_test.sh;  
+1. Run script $BUGSEARCH_BASE/manual_test/linux_test.sh;  
 
 ### Under Windows:
 #### Under VS2017 IDE:

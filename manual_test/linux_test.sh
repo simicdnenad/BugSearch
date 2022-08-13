@@ -27,6 +27,13 @@ q      ... quit script
 EOF
 }
 
+function clone_gtest_submodule()
+{
+  echo "Cloning gtest submodule."
+  cd ${BUGSEARCH_BASE}/lib
+  git submodule update --init --recursive
+}
+
 function build_app()
 {
   cd ${BUGSEARCH_BASE}/../build
@@ -47,6 +54,8 @@ function main()
 # print_info
   printf "\n"
   create_build_dir
+  printf "\n"
+  clone_gtest_submodule
   printf "\n"
   build_app
   printf "\n"

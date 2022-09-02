@@ -26,7 +26,8 @@ Clone repo with:
 ## Testing
 ### Under Linux:
 #### Under Eclipse IDE
-1. To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:  
+1. Go to File->Import and select General->Existing Project into Workspace. Then select the path of generated Eclipse project file ($BUGSEARCH_BASE/../build),  
+2. To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:  
 --bug_file ../Bug_search/manual_test/bug.nfo  
 --landscape_file ../Bug_search/manual_test/landscape.nfo  
 (or File->Import->Run/Debug->Launch Configurations "/manual_test/BugceAppDebugConfig.launch")

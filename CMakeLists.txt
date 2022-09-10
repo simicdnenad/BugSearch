@@ -19,7 +19,8 @@ ENDIF()
 
 add_subdirectory(src)
 add_subdirectory(tst)
+if (UNIX) ## TODO: Add googletest for win version also
 add_subdirectory(lib/googletest)
-
+endif(UNIX)
 
 

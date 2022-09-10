@@ -9,6 +9,7 @@ g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0,
 Eclipse 2019-06 (4.12.0);
 
 Windows 8,  
+cmake version 3.19.1,  
 VS 2017 Community (VC141),  
 Boost 1.65.1;  
 
@@ -20,8 +21,10 @@ Clone repo with:
 1. Run script $BUGSEARCH_BASE/manual_test/linux_test.sh;  
 
 ### Under Windows: 
-1. Add Environment Variable: BOOST_ROOT (e.g. "C:\Program Files\boost\boost_1_65_1"),  
-2. Generate VS2017 project file (to be able to Debug project from Visual Studio IDE): Run $cmake -G"Visual Studio 15 2017 Win64" ../Bug_search/;  
+1. Add Environment Variable "BOOST_ROOT" with installation path of Boost library (e.g. "C:\Program Files\boost\boost_1_65_1"),  
+2. Create "build" folder in parent directory of cloned repo,  
+3. Generate VS2017 project file inside of "build" folder (to be able to Debug project from Visual Studio IDE):  
+   $cmake -G"Visual Studio 15 2017 Win64" ../BugSearch/;  
 
 ## Testing
 ### Under Linux:
@@ -37,7 +40,8 @@ Clone repo with:
 ### Under Windows:
 #### Under VS2017 IDE:
 1. Under "Project Properties->Debugging->Command Arguments add (apsolute paths):
---bug_file "D:\\Bugce\\Bug_search\\manual_test\\bug.nfo"   --landscape_file "D:\\Bugce\\Bug_search\\manual_test\\landscape.nfo"  
+(e.g) --bug_file "C:\\Users\\Nenad\\Desktop\\Bugce\\BugSearch\\manual_test\\bug.nfo"
+      --landscape_file "C:\\Users\\Nenad\\Desktop\\Bugce\\BugSearch\\manual_test\\landscape.nfo"  
 2. In same panel edit "WorkingDirectory"=$(ProjectDir)\Debug;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------

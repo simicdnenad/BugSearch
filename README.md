@@ -29,11 +29,10 @@ Clone repo with:
 ## Testing
 ### Under Linux:
 #### Under Eclipse IDE
-1. Go to "File->Import" and select "General->Existing Project into Workspace". Then select the path of generated Eclipse project file ($BUGSEARCH_BASE/../build),  
-2. To be able to test application, under "Eclise->Project properties->Run/Debug Settings" add input arguments:  
---bug_file ../Bug_search/manual_test/bug.nfo  
---landscape_file ../Bug_search/manual_test/landscape.nfo  
-(or File->Import->Run/Debug->Launch Configurations "/manual_test/BugceAppDebugConfig.launch")
+1. Go to "File->Import" and select "General->Existing Project into Workspace". Then select the directory of generated Eclipse project file ($BUGSEARCH_BASE/../build),  
+2. To be able to test the application, go to "Binaries->BinaryName" and select "Properties". Add new "Run/Debug Settings" add insert input arguments:  
+--bug_file ../BugSearch/manual_test/bug.nfo  
+--landscape_file ../BugSearch/manual_test/landscape.nfo  
 #### From command line
 1. Run script $BUGSEARCH_BASE/manual_test/linux_test.sh;  
 

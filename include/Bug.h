@@ -74,6 +74,7 @@ namespace landscape {
 			BUG_FAIL = 0x03U,
 		};
 		static const map<EFileOpenErrors, string> mapFileErrors;
+		const string& GetBugName () const { return m_sBugName; }
 #ifdef MULTI_THREAD
 		static EFileOpenErrors OnInit(std::vector<std::string>::iterator& iBugFile, const std::string& strLandFile);
 		static unsigned GetTotNumOfBugs() { return s_uTotalNOB; }

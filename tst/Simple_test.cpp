@@ -9,14 +9,28 @@ class CBugTest : public ::testing::Test {
  protected:
 	void SetUp() override
 	{
-		p_BugTest = new CBugT ("TestBug1");
+		up_BugTest = std::unique_ptr<CBugT>(new CBugT ("TestBug1"));
 	}
 
-	void TearDown() override { delete p_BugTest;}
-	CBugT*	p_BugTest;
+	void TearDown() override {}
+	unique_ptr<CBugT> up_BugTest;
 };
 
-TEST_F(CBugTest, TestBasic)
+TEST_F( CBugTest, TestFileInput )
 {
-	EXPECT_TRUE(!(p_BugTest->GetBugName().compare("TestBug1")));
+	EXPECT_TRUE( !(up_BugTest->GetBugName().compare("TestBug1")) );
+
+	vector<string> vBugTestFilesPaths;
+	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/bug.nfo" );
+	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/bug1.nfo" );
+	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/bug2.nfo" );
+	auto iBugTestFilesPaths = vBugTestFilesPaths.begin();
+
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape1.nfo") , CBugT::EFileOpenErrors::LANDSCAPE_FAIL );
+	iBugTestFilesPaths++;
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::BUG_FAIL );
+	iBugTestFilesPaths++;
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::BUG_FAIL );
+
 }

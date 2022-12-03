@@ -34,3 +34,20 @@ TEST_F( CBugTest, TestFileInput )
 	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::BUG_FAIL );
 
 }
+
+TEST_F( CBugTest, TestNumOfBugs )
+{
+	vector<string> vBugTestFilesPaths;
+	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/spiderman_2.nfo" );
+	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/spiderman.nfo" );
+	auto iBugTestFilesPaths = vBugTestFilesPaths.begin();
+
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
+	up_BugTest->NumOfBugs( 0 );
+	EXPECT_EQ( up_BugTest->GetNumOfBugs(), 0 );
+
+	iBugTestFilesPaths++;
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
+	up_BugTest->NumOfBugs( 0 );
+	EXPECT_EQ( up_BugTest->GetNumOfBugs(), 3 );
+}

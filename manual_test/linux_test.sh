@@ -6,6 +6,7 @@
 
 SYSTEM="uname"
 TARGET="${BUGSEARCH_BASE}/../build/src/BugSearchLinux"
+TEST="${BUGSEARCH_BASE}/../build/tst/BugSearch_tst"
 
 function create_build_dir() {
   if [ ! -r "${BUGSEARCH_BASE}/../build" ]; then
@@ -49,6 +50,12 @@ function run_app()
   $TARGET --bug_file ${BUGSEARCH_BASE}/manual_test/bug.nfo --landscape_file ${BUGSEARCH_BASE}/manual_test/landscape.nfo
 }
 
+function run_unit_tests()
+{
+  echo "Running Unit Tests."
+  $TEST
+}
+
 function main()
 {
 # print_info
@@ -59,9 +66,9 @@ function main()
   printf "\n"
   build_app
   printf "\n"
-  run_app  	
+  run_app
+  printf "\n"
+  run_unit_tests
 }
 
 main $*
-
-

@@ -47,13 +47,13 @@ TEST( BugTest, TestNumOfBugs )
 		string sFileName = (*iBugTestFilesPaths).substr((*iBugTestFilesPaths).rfind(DIR_SEPARATOR) + 1,
 						   (*iBugTestFilesPaths).rfind('.') - (*iBugTestFilesPaths).rfind(DIR_SEPARATOR) - 1);
 		CBugT Bug(sFileName);
-		EXPECT_EQ( Bug.OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
+		ASSERT_EQ( Bug.OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
 		Bug.NumOfBugs( 0 );
 
 		if ( sFileName.compare("spiderman_2") == 0  )
 			EXPECT_EQ( Bug.GetNumOfBugs(), 0 );
 		else if ( sFileName.compare("spiderman") == 0 )
-			EXPECT_EQ( Bug.GetNumOfBugs(), 3 );
+			EXPECT_EQ( Bug.GetNumOfBugs(), 4 );
 
 		iBugTestFilesPaths++;
 	}

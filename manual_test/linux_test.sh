@@ -56,7 +56,7 @@ function run_unit_tests()
   $TEST
   echo "Creating Code Coverage Report."
   lcov -c -d ${BUGSEARCH_BASE}/../build/tst/CMakeFiles/BugSearch_tst.dir/ -o main_coverage.info
-  genhtml main_coverage.info --output-directory out
+  genhtml main_coverage.info --output-directory ${BUGSEARCH_BASE}/out
 }
 
 function main()

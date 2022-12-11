@@ -4,6 +4,13 @@
 #
 #
 
+if [ -z "${BUGSEARCH_BASE}" ]
+then
+  BUGSEARCH_BASE=$(readlink -f "$0")
+  BUGSEARCH_BASE=$(dirname "${BUGSEARCH_BASE}")
+  BUGSEARCH_BASE="${BUGSEARCH_BASE}/.."
+fi
+
 SYSTEM="uname"
 TARGET="${BUGSEARCH_BASE}/../build/src/BugSearchLinux"
 TEST="${BUGSEARCH_BASE}/../build/tst/BugSearch_tst"

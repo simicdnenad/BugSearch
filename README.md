@@ -18,8 +18,7 @@ Boost 1.65.1;
 Clone repo with:  
 1. $git clone https://github.com/simicdnenad/BugSearch.git; 
 ### Under Linux:
-1. Define global variable "BUGSEARCH_BASE" with content of directory path of cloned repo (e.g. $export BUGSEARCH_BASE=/home/nenad/Desktop/workspace_work/BugSearchRepo/BugSearch),  
-1. Run script $BUGSEARCH_BASE/manual_test/linux_test.sh;  
+1. Run script (contained in cloned repo): BugSearch/manual_test/linux_test.sh;  
 
 ### Under Windows: 
 1. Add Environment Variable "BOOST_ROOT" with installation path of Boost library (e.g. "C:\Program Files\boost\boost_1_65_1"),  
@@ -30,12 +29,12 @@ Clone repo with:
 ## Testing
 ### Under Linux:
 #### Under Eclipse IDE
-1. Go to "File->Import" and select "General->Existing Project into Workspace". Then select the directory of generated Eclipse project file ($BUGSEARCH_BASE/../build),  
+1. Go to "File->Import" and select "General->Existing Project into Workspace". Then select the directory of generated Eclipse project file (BugSearch/../build),  
 2. To be able to test the application, go to "Binaries->BinaryName" and select "Properties". Add new "Run/Debug Settings" add insert input arguments:  
 --bug_file ../BugSearch/manual_test/bug.nfo  
 --landscape_file ../BugSearch/manual_test/landscape.nfo  
 #### From command line
-1. Run script $BUGSEARCH_BASE/manual_test/linux_test.sh;  
+1. Run script (contained in cloned repo): BugSearch/manual_test/linux_test.sh;  
 
 ### Under Windows:
 #### Under VS2017 IDE:

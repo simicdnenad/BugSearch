@@ -7,7 +7,9 @@ Small application which is searching throught "/manual_test/landscape.nfo" file 
 cmake version 3.10.2,  
 g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0,  
 Eclipse 2019-06 (4.12.0),  
-GCov and LCov installed;  
+GCov and LCov installed,  
+QMake version 3.1,  
+Qt version 5.9.5;  
 
 Windows 8,  
 cmake version 3.19.1,  
@@ -46,6 +48,9 @@ Clone repo with:
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Bugfixing/Upgrading.  
+Working on:  
+1. Adding Qt GUI interface;  
+
 TODO:  
 1. Add more input Bug files (via Boost program options) and do search for all of them;  
 

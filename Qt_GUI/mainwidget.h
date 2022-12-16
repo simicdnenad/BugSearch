@@ -2,6 +2,8 @@
 #define MAINWIDGET_H
 
 #include <QWidget>
+#include <memory>
+using namespace std;
 
 class QPushButton;
 class QTextBrowser;
@@ -14,11 +16,11 @@ class MainWidget : public QWidget
 
 public:
     explicit MainWidget(QWidget *parent = 0); //Constructor
-    ~MainWidget(); // Destructor
+    virtual ~MainWidget(); // Destructor
 
 private:
-   QPushButton* button_;
-   QTextBrowser* textBrowser_;
+    unique_ptr<QPushButton> up_Button;
+    unique_ptr<QTextBrowser> up_textBrowser;
 };
 
 #endif // MAINWIDGET_H

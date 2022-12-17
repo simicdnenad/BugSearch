@@ -51,6 +51,14 @@ function build_app()
   make -f Makefile
 }
 
+function build_gui()
+{
+  cd ${BUGSEARCH_BASE}/Qt_GUI
+  echo "Building app GUI version"
+  qmake Qt_GUI.pro
+  make -f Makefile
+}
+
 function run_app()
 {
   echo "Running app."
@@ -79,6 +87,8 @@ function main()
   run_app
   printf "\n"
   run_unit_tests
+  printf "\n"
+  build_gui
 }
 
 main $*

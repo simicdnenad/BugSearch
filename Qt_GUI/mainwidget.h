@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <memory>
+#include <QProcess>
 using namespace std;
 
 class QPushButton;
@@ -18,9 +19,14 @@ public:
     explicit MainWidget(QWidget *parent = 0); //Constructor
     virtual ~MainWidget(); // Destructor
 
+private slots:
+    void onButtonReleased(); // Handler for button pressed
+    void onCaptureProcessOutput(); // Handler for Process output
+
 private:
     unique_ptr<QPushButton> up_Button;
     unique_ptr<QTextBrowser> up_textBrowser;
+    unique_ptr<QProcess> up_Process;
 };
 
 #endif // MAINWIDGET_H

@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = app
-TARGET = Qt_GUT
+TARGET = Qt_GUI
 INCLUDEPATH += .
 
 QT += widgets

@@ -18,16 +18,22 @@ Boost 1.65.1;
 
 ## Compilation
 Clone repo with:  
-1. $git clone https://github.com/simicdnenad/BugSearch.git; 
+```
+    git clone https://github.com/simicdnenad/BugSearch.git;
+```
 ### Under Linux:
-1. Run script (contained in cloned repo): BugSearch/manual_test/linux_test.sh;  
+1. Run script (contained in cloned repo):  
+```
+    BugSearch/manual_test/linux_test.sh;
+```
 
 ### Under Windows: 
 1. Add Environment Variable "BOOST_ROOT" with installation path of Boost library (e.g. "C:\Program Files\boost\boost_1_65_1"),  
 2. Create "build" folder in parent directory of cloned repo,  
 3. Generate VS2017 project file inside of "build" folder (to be able to Debug project from Visual Studio IDE):  
-   $cmake -G"Visual Studio 15 2017 Win64" ../BugSearch/;  
-
+```
+    cmake -G"Visual Studio 15 2017 Win64" ../BugSearch/;  
+```
 ## Testing
 ### Under Linux:
 #### Under Eclipse IDE
@@ -36,7 +42,10 @@ Clone repo with:
 --bug_file ../BugSearch/manual_test/bug.nfo  
 --landscape_file ../BugSearch/manual_test/landscape.nfo  
 #### From command line
-1. Run script (contained in cloned repo): BugSearch/manual_test/linux_test.sh;  
+1. Run script (contained in cloned repo):  
+```
+    BugSearch/manual_test/linux_test.sh;
+```
 
 ### Under Windows:
 #### Under VS2017 IDE:

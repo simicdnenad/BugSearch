@@ -46,7 +46,12 @@ function build_app()
 {
   cd ${BUGSEARCH_BASE}/../build
   echo "Generating Eclipse project file"
-  cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug ${BUGSEARCH_BASE}
+  if [[ "$1" == "IPC" ]]; then
+    # comile project with usage of Sockets
+    cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug -D PREPROC_DEFINES=${PREPROC_DEFINES} ${BUGSEARCH_BASE}
+  else
+    cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug  ${BUGSEARCH_BASE}
+  fi
   echo "Building project"
   make -f Makefile
 }
@@ -82,7 +87,7 @@ function main()
   printf "\n"
   clone_gtest_submodule
   printf "\n"
-  build_app
+  build_app $1
   printf "\n"
   run_app
   printf "\n"

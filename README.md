@@ -26,6 +26,10 @@ Clone repo with:
 ```
     BugSearch/manual_test/linux_test.sh;
 ```
+1.1 If you want to use Sockets between GUI Client and Search App run:
+```
+    BugSearch/manual_test/linux_test.sh IPC;
+```
 
 ### Under Windows: 
 1. Add Environment Variable "BOOST_ROOT" with installation path of Boost library (e.g. "C:\Program Files\boost\boost_1_65_1"),  

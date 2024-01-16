@@ -26,7 +26,7 @@ Clone repo with:
 ```
     BugSearch/manual_test/linux_test.sh;
 ```
-1.1 If you want to use Sockets between GUI Client and Search App run:
+1.1 If you want to use Sockets (for IPC) between GUI Client and Search App run:
 ```
     BugSearch/manual_test/linux_test.sh IPC;
 ```

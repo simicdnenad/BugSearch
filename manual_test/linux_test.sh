@@ -48,6 +48,7 @@ function build_app()
   echo "Generating Eclipse project file"
   if [[ "$1" == "IPC" ]]; then
     # comile project with usage of Sockets
+    PREPROC_DEFINES="$1"
     cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug -D PREPROC_DEFINES=${PREPROC_DEFINES} ${BUGSEARCH_BASE}
   else
     cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_BUILD_TYPE=Debug  ${BUGSEARCH_BASE}

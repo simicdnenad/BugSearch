@@ -1,0 +1,41 @@
+#include "SocketClass.h"
+#include <iostream>
+
+namespace landscape {
+
+bool CSocket::initSocket(){
+	m_SockFd = socket(AF_INET, SOCK_STREAM, 0);
+	if (m_SockFd < 0){
+		std::cout << "ERROR opening socket" << std::endl;
+		return false;
+	}
+
+	bzero((char *) &m_ServAddr, sizeof(m_ServAddr));
+	m_Portno = PORT;
+	m_ServAddr.sin_family = AF_INET;
+	m_ServAddr.sin_addr.s_addr = INADDR_ANY;
+	m_ServAddr.sin_port = htons(m_Portno);
+
+	if (bind(m_SockFd, (struct sockaddr *) &m_ServAddr, sizeof(m_ServAddr)) < 0){
+		std::cout << "ERROR on binding" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool CSocket::listenSocket(){
+	listen(m_SockFd,5);
+	m_CliLen = sizeof(m_CliAddr);
+	m_NewSockFd = accept(m_SockFd,
+			   (struct sockaddr *) &m_CliAddr,
+			   &m_CliLen);
+	if (m_NewSockFd < 0)
+	{
+		std::cout << "ERROR on accept" << std::endl;
+		return false;
+	}
+	return true;
+}
+
+}

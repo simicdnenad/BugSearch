@@ -6,8 +6,18 @@
 using namespace landscape;
 typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
 
+#ifdef IPC
+#include "SocketClass.h"
+#endif
+
 int main(int ac, char** av)
 {
+#ifdef IPC
+	CSocket socketWaitClient;
+	socketWaitClient.initSocket();
+	std::cout << "Waiting IPC command for program start!" << endl;
+	socketWaitClient.listenSocket();
+#endif
 	po::variables_map vm;
 	po::options_description desc("Allowed Options");
 

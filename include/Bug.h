@@ -43,16 +43,6 @@ namespace po = boost::program_options;
 #define LINES_PER_THREAD		1000000			// MAX_NUMOF_LINES
 #endif
 
-#ifdef USE_SOCKETS			// For program start over network
-#include <netinet/in.h>
-#include <stdio.h>
-#include <stdlib.h>
-//#include <string.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#define PORT 8080
-#endif
-
 namespace landscape {
 
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
@@ -122,16 +112,6 @@ namespace landscape {
 			Data& operator*();
 			virtual ~Iterator();
 		};
-#ifdef USE_SOCKETS
-	    int mServerFd, NewSocket;
-	    ssize_t sizeValRead;
-	    struct sockaddr_in address;
-	    int mOpt = 1;
-	    socklen_t addrlen = sizeof(address);
-	    char buffSocket[1024] = { 0 };
-	    //char* strHello = "Hello from server";			// produces: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
-
-#endif
 	private:
 		vector<Iterator> m_viSearchForBug;
 		static void clearLastSearch();

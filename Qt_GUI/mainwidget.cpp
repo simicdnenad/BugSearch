@@ -1,11 +1,12 @@
 #include <QtWidgets>
 #include "mainwidget.h"
+#include "SocketClassClient.h"
 
 // Constructor for main widget
 MainWidget::MainWidget(QWidget *parent) :
     QWidget(parent)
 {
-    up_Button.reset(new QPushButton(tr("List Test Files.")));
+    up_Button.reset(new QPushButton(tr("Send command for connection.")));
     up_textBrowser.reset(new QTextBrowser());
     up_Process.reset(new QProcess());
 
@@ -13,7 +14,7 @@ MainWidget::MainWidget(QWidget *parent) :
     mainLayout->addWidget(up_Button.get(),0,0);
     mainLayout->addWidget(up_textBrowser.get(),1,0);
     setLayout(mainLayout);
-    setWindowTitle(tr("Listing test directory content..."));
+    setWindowTitle(tr("Application for remote connection to \"Bug Search app\""));
 
     // Connect the Buttons "released" signal to MainWidget's onButtonReleased method.
     connect(up_Button.get(), SIGNAL(released()), this, SLOT(onButtonReleased()));
@@ -23,13 +24,14 @@ MainWidget::MainWidget(QWidget *parent) :
 // Handler for button click
 void MainWidget::onButtonReleased()
 {
-    // clear the text in the textBrowser
-    up_textBrowser->clear();
-    up_textBrowser->append(tr("Running command:"));
+    CSocketClient SocketClient;
 
-    // Set up our process to write to stdout and run our command
-    up_Process->setCurrentWriteChannel(QProcess::StandardOutput); // Set the write channel
-    up_Process->start("find ../manual_test/ -name \"*.nfo\"  "); // Start the program
+    if (true == SocketClient.initSocket()) {
+        up_textBrowser->append(tr("Client Socket successfully connected."));
+    }
+    else {
+        up_textBrowser->append(tr("Client Socket failed to connect!"));
+    }
 }
 
 void MainWidget::onCaptureProcessOutput()

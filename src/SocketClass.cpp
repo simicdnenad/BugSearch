@@ -38,4 +38,11 @@ bool CSocket::listenSocket(){
 	return true;
 }
 
+CSocket::~CSocket()
+{
+	std::cout << "Closing opened sockets." << std::endl;
+	close(m_NewSockFd);
+	close(m_SockFd);
+}
+
 }

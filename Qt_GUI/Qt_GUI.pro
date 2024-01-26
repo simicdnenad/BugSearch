@@ -13,4 +13,4 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 # Input
 HEADERS += mainwidget.h
-SOURCES += main.cpp mainwidget.cpp
+SOURCES += main.cpp mainwidget.cpp SocketClassClient.cpp

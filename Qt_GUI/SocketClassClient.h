@@ -6,26 +6,20 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h> 
 #define PORT 8080
 
-namespace landscape {
-
-class CSocket
+class CSocketClient
 {
-    int m_SockFd, m_NewSockFd, m_Portno;
-    socklen_t m_CliLen;
+    int m_SockFd, m_Portno;
     char a_Buffer[256];
-    struct sockaddr_in m_ServAddr, m_CliAddr;
+    struct sockaddr_in m_ServAddr;
     int m_N;
+    struct hostent *m_ServerName;
 
 public:
-    CSocket()=default;
+    CSocketClient()=default;
     bool initSocket();
-    bool listenSocket();
 
-    ~CSocket();
+    ~CSocketClient();
 };
-
-
-
-}

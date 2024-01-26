@@ -65,6 +65,14 @@ function build_gui()
   make -f Makefile
 }
 
+function run_GUI()
+{
+  if [[ "$1" == "IPC" ]]; then
+    echo "Starting GUI app.\n"
+    ${BUGSEARCH_BASE}/../build/Qt_GUI &
+  fi
+}
+
 function run_app()
 {
   echo "Running app."
@@ -83,18 +91,25 @@ function run_unit_tests()
 function main()
 {
 # print_info
+if [[ "$1" != "GUI_ONLY" ]]; then
   printf "\n"
   create_build_dir
   printf "\n"
   clone_gtest_submodule
+  printf "\n"
+  build_gui
+  printf "\n"
+  run_GUI $1
   printf "\n"
   build_app $1
   printf "\n"
   run_app
   printf "\n"
   run_unit_tests
+else
   printf "\n"
   build_gui
+fi
 }
 
 main $*

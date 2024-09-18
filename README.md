@@ -2,6 +2,43 @@
 
 Small application which is searching throught "/manual_test/landscape.nfo" file for a multiline string pattern from "/manual_test/bug.nfo" file.
 
+## Files
+```
+.
+├── CMakeLists.txt
+├── include
+│   ├── Bug.h
+│   ├── Bug_impl.hpp
+│   └── SocketClass.h
+├── lib
+│   └── googletest
+├── manual_test
+│   ├── bug.nfo
+│   ├── landscape.nfo
+│   ├── linux_test.sh
+│   ├── spiderman_2.nfo
+│   └── spiderman.nfo
+├── Qt_GUI
+│   ├── main.cpp
+│   ├── mainwidget.cpp
+│   ├── mainwidget.h
+│   ├── Qt_GUI.pro
+│   ├── SocketClassClient.cpp
+│   └── SocketClassClient.h
+├── README.md
+├── src
+│   ├── Bug.cpp
+│   ├── BugSearchLinux.cpp
+│   ├── BugSearchWin.cpp
+│   ├── CMakeLists.txt
+│   └── SocketClass.cpp
+├── tst
+│   ├── CMakeLists.txt
+│   ├── main.cpp
+│   └── Simple_test.cpp
+└── Upgrading BugSearch.nfo
+```
+
 ## Prerequisities (Tested on)
 18.04.1-Ubuntu (Debian),  
 cmake version 3.10.2,  

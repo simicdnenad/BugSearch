@@ -88,6 +88,13 @@ function run_unit_tests()
   genhtml main_coverage.info --output-directory ${BUGSEARCH_BASE}/out
 }
 
+function create_doxygen_docu()
+{
+  echo "Creating doxygen documentation."
+  cd ${BUGSEARCH_BASE}
+  doxygen
+}
+
 function main()
 {
 # print_info
@@ -106,6 +113,8 @@ if [[ "$1" != "GUI_ONLY" ]]; then
   run_app
   printf "\n"
   run_unit_tests
+  printf "\n"
+  create_doxygen_docu
 else
   printf "\n"
   build_gui

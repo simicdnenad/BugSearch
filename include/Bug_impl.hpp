@@ -111,12 +111,12 @@ namespace landscape
 	}
 
 	/**
-	 * Initialize instance of CBug class.
+	 * @brief Initialize instance of CBug class.
 	 *
-	 * loads landscape and bug text files in list<string> data structures
+	 * loads landscape and bug text files in list<string> data structures to provide searching.
 	 *
-	 * @param int ac		number of arguments in application call
-	 * @param char** av		passed arguments
+	 * @param iBugFile				pointer to current bug text file name, which contains pattern to be searched for
+	 * @param const std::string& strLandFile	name of file through which should be searched for
 	 * @return bool status (success or false)
 	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
@@ -150,8 +150,8 @@ namespace landscape
 		//----------------------BUG------------------------------
 		while (getline(infilebug, oneline))
 		{
-			/**if(oneline.empty())
-				continue;						Not skipping empty lines to avoid "merging" of Bug parts */
+			// if(oneline.empty())
+			//	continue;						Not skipping empty lines to avoid "merging" of Bug parts
 			s_lFileBug.emplace_back(oneline);
 			if (oneline.size() > s_uBugMaxDim)
 				s_uBugMaxDim = oneline.size();
@@ -165,8 +165,8 @@ namespace landscape
 		//----------------------LAND------------------------------
 		while (getline(infilelanscape, oneline))		// Add also num of lines count, to determine the optimal number of created threads
 		{
-			/**if(oneline.empty())
-				continue;							Not skipping empty lines to avoid "merging" of Bug parts */
+			// if(oneline.empty())
+			//	continue;							Not skipping empty lines to avoid "merging" of Bug parts
 			s_lFileLand.emplace_back(oneline);
 			s_uNumOfLines++;
 		}
@@ -177,10 +177,18 @@ namespace landscape
 		return EFileOpenErrors::ALL_SUCCESSFULL;
 	}
 
+	/**
+	 * @brief Searches for bug pattern through loaded landscape file.
+	 *
+	 * Iterates through loaded landscape file and search for multi-line bug pattern. As result it updates m_uNumOfBugs counter.
+	 *
+	 * @param unsigned int start_line
+	 * @return void
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	void CBug<Data, iData, Container>::NumOfBugs(unsigned int start_line)
 	{
-		/**unsigned*/ int start_from = 0, found_at = 0, processed_line = start_line;
+		int start_from = 0, found_at = 0, processed_line = start_line;
 		for (unsigned int i = 0; i < s_uBugDimNum && i + processed_line < GetNumOfLines(); i++)
 			m_viSearchForBug.push_back(Iterator(*this, start_line + i, start_line + LINES_PER_THREAD + i));
 		if (processed_line + s_uBugDimNum > GetNumOfLines())

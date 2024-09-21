@@ -57,7 +57,7 @@ namespace landscape {
 #endif
 		static Container<Data> s_lFileLand, s_lFileBug;
 		static vector<iData> s_viBugItself;
-		bool SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_from, unsigned int currbugdim);
+		bool SearchBugPart(int found_at, int &start_from, unsigned int currbugdim);
 		unsigned MaxBugPart(unsigned dim);
 #ifdef SIMPLE_LOG
 		unsigned m_uCurrLine;

@@ -38,7 +38,12 @@ namespace landscape
 		{EFileOpenErrors::LANDSCAPE_FAIL, "Failed to open landscape file:"},
 		{EFileOpenErrors::BUG_FAIL, "Failed to open bug file:"}
 	};
-	////////////////////////// methods
+	/**
+	 * \brief A Constructor of an object of CBug class type.
+	 *
+	 * Every object should create separate thread, which should load sequential parts of landscape file,
+	 * process them in parallel and update total number of found bug patterns.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	CBug<Data, iData, Container>::CBug(string sBugName) :m_sBugName(sBugName)
 	{
@@ -94,6 +99,10 @@ namespace landscape
 				m_fWriteFound.close();
 #endif
 	}
+
+	/**
+	 * \brief Emptys global variables if search on new data should be performed
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	void CBug<Data, iData, Container>::clearLastSearch()
 	{
@@ -182,7 +191,7 @@ namespace landscape
 	 *
 	 * Iterates through loaded landscape file and search for multi-line bug pattern. As result it updates m_uNumOfBugs counter.
 	 *
-	 * @param unsigned int start_line
+	 * @param start_line starting line in loaded landscape file
 	 * @return void
 	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
@@ -222,8 +231,18 @@ namespace landscape
 #endif
 	}
 
+	/**
+	 * @brief Checks if rest of rows of Bug template are matching.
+	 *
+	 * If first row of loaded bug file is found in some row of landscape file then rest of the rows should also be compared.
+	 *
+	 * @param found_at column of processed row of landscape file, where bug pattern was matched
+	 * @param start_from if bug pattern was found, next search should start after found bug
+	 * @param currbugdim used for checking if last row of bug pattern has been matched (and therefore bug found)
+	 * @return bool if checked bug pattern row is mathed or not
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
-	bool CBug<Data, iData, Container>::SearchBugPart(/**unsigned*/ int found_at, /**unsigned*/ int &start_from, unsigned int currbugdim)
+	bool CBug<Data, iData, Container>::SearchBugPart(int found_at, int &start_from, unsigned int currbugdim)
 	{
 		unsigned int pos = 0;
 

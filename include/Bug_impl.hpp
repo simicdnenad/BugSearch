@@ -1,36 +1,69 @@
 #pragma once
 namespace landscape
 {
-	////////////////////// static fields
+	/**
+	 * \brief Vector of pointers to loaded Bug strings.
+	 *
+	 * Represents the pointers to loaded rows, which are basically
+	 * the parts of loaded Bug pattern (which is read from file)
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	vector<iData> CBug<Data, iData, Container>::s_viBugItself;
-
+	/**
+	 * \brief Size of Bug row which has the most characters. Used to skip the found one and proceed to next one.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	unsigned CBug<Data, iData, Container>::s_uBugMaxDim;
+	/**
+	 * \brief Number or rows which Bug pattern contains.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	unsigned CBug<Data, iData, Container>::s_uBugDimNum;
+	/**
+	 * \brief Number of rows of file through which is searched for Bug pattern.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	unsigned CBug<Data, iData, Container>::s_uNumOfLines;
-
+	/**
+	 * \brief Container (vector or list) of strings which basically contains rows of file through which is searched for Bug pattern.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	Container<Data> CBug<Data, iData, Container>::s_lFileLand;
+	/**
+	 * \brief Container (vector or list) of strings which basically contains rows of file which represents Bug pattern.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	Container<Data>  CBug<Data, iData, Container>::s_lFileBug;
 
 #ifdef MULTI_THREAD
+	/**
+	 * \brief Number of threads used for searching.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	unsigned CBug<Data, iData, Container>::s_uNumOfThreads = 0;
+	/**
+	 * \brief Total number of found Bug patterns inside of Landscape file.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	unsigned CBug<Data, iData, Container>::s_uTotalNOB;
+	/**
+	 * \brief Mutex for updating global variable.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	mutex CBug<Data, iData, Container>::s_mTotalNOB;
 #endif
 #ifdef _DEBUG
+	/**
+	 * \brief Debug file handler.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	ofstream CBug<Data, iData, Container>::s_fDebugTrace;
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	string CBug<Data, iData, Container>::s_strDebugFileName("DebugTraceEmbedded.txt");
 #endif
+	/**
+	 * \brief Hash map of file handling errors and their explanations.
+	 */
 	template <class Data, class iData, template<typename _Tp, typename _Alloc = std::allocator<_Tp> > class Container >
 	const map<typename CBug<Data, iData, Container>::EFileOpenErrors, string> CBug<Data, iData, Container>::mapFileErrors = {
 		{EFileOpenErrors::ALL_SUCCESSFULL, "Every file opened successfully."},

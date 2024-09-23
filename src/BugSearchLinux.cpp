@@ -10,6 +10,81 @@ typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
 #include "SocketClass.h"
 #endif
 
+/**
+ * @brief loads from files Bug (pattern to be searched for) and Landscape (bigger file through which is searched) inside of program structures
+ *
+ * loads landscape and bug text files in container<string> data structures to provide searching. In case when multithreading preprocessor const is enabled
+ * data is processed between multiple threads in parralel, and number of found Bugs is updated.
+ *
+ * @param vm			program arguments stored in variables_map structure. Represent names of files which are storing data to be processed.
+ * @param iBugFilesPaths	iterator to the vector of strings. Those strings are names of files which store Bug patterns to be serched for.
+ * @param vBugFilesPaths	vector of strings. Those strings are names of files which store Bug patterns to be serched for. 
+ * @return int (-1 is false, >=0 is true)
+ */
+int processData(po::variables_map& vm, vector<string>::iterator& iBugFilesPaths, vector<string>& vBugFilesPaths) {
+	unsigned int NumOfLines = 0;
+#ifndef MULTI_THREAD
+	while (iBugFilesPaths != vBugFilesPaths.end()) {
+		string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR) + 1,
+			(*iBugFilesPaths).rfind('.') - (*iBugFilesPaths).rfind(DIR_SEPARATOR) - 1);
+		CBug<string, CONTAINER<string>::iterator, CONTAINER> bubica(sFileName);
+
+		if (bubica.OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>()) == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::ALL_SUCCESSFULL) {
+			cout << "Input files are correctly opened and loaded in memory." << '\n';
+		}
+		else
+			cout << "Input files are not correctly opened!!!" << '\n';
+
+		cout << "Number of lines:" << (NumOfLines = CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetNumOfLines()) << '\n';
+		bubica.NumOfBugs();
+		cout << "Number of found bugs:" << (NumOfLines = bubica.GetNumOfBugs()) << '\n';
+		iBugFilesPaths++;
+	}
+#else
+	while (iBugFilesPaths != vBugFilesPaths.end()) {
+		CBugT::EFileOpenErrors eFileOpen;
+		if ((eFileOpen = CBugT::OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>())) != CBugT::EFileOpenErrors::ALL_SUCCESSFULL) {
+			cout << CBugT::mapFileErrors.at(eFileOpen);
+			if (eFileOpen == CBugT::EFileOpenErrors::LANDSCAPE_FAIL) {
+				cout << vm["landscape_file"].as<std::string>() << endl;
+				return -1;
+			}
+			else if (eFileOpen == CBugT::EFileOpenErrors::BUG_FAIL)
+				cout << *iBugFilesPaths << endl;
+			else
+				cout << endl;
+			iBugFilesPaths++;
+			continue;
+		}
+
+		cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
+
+		string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR)+1,
+			(*iBugFilesPaths).rfind('.')-(*iBugFilesPaths).rfind(DIR_SEPARATOR)-1);
+		vector<std::thread> vThreads;
+		vector<unique_ptr<CBugT>> vupBugs;
+		for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++) {
+			vupBugs.push_back((unique_ptr<CBugT>)(new CBugT(sFileName)));
+			vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
+		}
+
+		auto iupBugs = vupBugs.begin();
+		for (std::thread& rThread : vThreads) {
+			if (rThread.joinable())
+				rThread.join();
+			cout << "Number of Bugs (tid=" << ((*iupBugs).get())->GetThreadId() << ")=" << ((*iupBugs).get())->GetNumOfBugs() << "\n";
+			iupBugs++;
+		}
+		vThreads.erase(vThreads.begin(), vThreads.end());
+		vupBugs.erase(vupBugs.begin(), iupBugs);
+		cout << "Total number of Bugs: " << CBugT::GetTotNumOfBugs() << "\n";
+
+		iBugFilesPaths++;
+	}
+#endif
+	return 0;
+}
+
 int main(int ac, char** av)
 {
 #ifdef IPC
@@ -20,14 +95,13 @@ int main(int ac, char** av)
 #endif
 	po::variables_map vm;
 	po::options_description desc("Allowed Options");
+	int retVal = 0;
 
 	// declare arguments (boost)
 	desc.add_options()
 		("bug_file(s)", po::value<vector<string>>()->multitoken(), "Provide relative path to \"bug.nfo\" file(s)")
 		("landscape_file", po::value<std::string>()->required(), "Provide relative path to \"landscape.nfo\" file");
-	try 
-	{
-		unsigned int NumOfLines = 0;
+	try {
 #ifdef CHECK_TIME
 		clock_t begin, end;
 		double time_spent;
@@ -51,82 +125,21 @@ int main(int ac, char** av)
 
 		po::notify(vm);						// for reporting exception
 		iBugFilesPaths = vBugFilesPaths.begin();
-#ifndef MULTI_THREAD
-		while (iBugFilesPaths != vBugFilesPaths.end())
-		{
-			string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR) + 1,
-				(*iBugFilesPaths).rfind('.') - (*iBugFilesPaths).rfind(DIR_SEPARATOR) - 1);
-			CBug<string, CONTAINER<string>::iterator, CONTAINER> bubica(sFileName);
-
-			if (bubica.OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>()) == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::ALL_SUCCESSFULL)
-			{
-				cout << "Input files are correctly opened and loaded in memory." << '\n';
-			}
-			else
-				cout << "Input files are not correctly opened!!!" << '\n';
-
-			cout << "Number of lines:" << (NumOfLines = CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetNumOfLines()) << '\n';
-			bubica.NumOfBugs();
-			cout << "Number of found bugs:" << (NumOfLines = bubica.GetNumOfBugs()) << '\n';
-			iBugFilesPaths++;
+		retVal = processData(vm, iBugFilesPaths, vBugFilesPaths);
+		if (-1 == retVal) {
+			return retVal;
 		}
-#else
-		while (iBugFilesPaths != vBugFilesPaths.end())
-		{
-			CBugT::EFileOpenErrors eFileOpen;
-			if ((eFileOpen = CBugT::OnInit(iBugFilesPaths, vm["landscape_file"].as<std::string>())) != CBugT::EFileOpenErrors::ALL_SUCCESSFULL)
-			{
-				cout << CBugT::mapFileErrors.at(eFileOpen);
-				if (eFileOpen == CBugT::EFileOpenErrors::LANDSCAPE_FAIL)
-				{
-					cout << vm["landscape_file"].as<std::string>() << endl;
-					return -1;
-				}
-				else if (eFileOpen == CBugT::EFileOpenErrors::BUG_FAIL)
-					cout << *iBugFilesPaths << endl;
-				else
-					cout << endl;
-				iBugFilesPaths++;
-				continue;
-			}
-
-			cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
-	
-			string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR)+1,
-				(*iBugFilesPaths).rfind('.')-(*iBugFilesPaths).rfind(DIR_SEPARATOR)-1);
-			vector<std::thread> vThreads;
-			vector<unique_ptr<CBugT>> vupBugs;
-			for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++)
-			{
-				vupBugs.push_back((unique_ptr<CBugT>)(new CBugT(sFileName)));
-				vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
-			}
-
-			auto iupBugs = vupBugs.begin();
-			for (std::thread& rThread : vThreads)
-			{
-				if (rThread.joinable())
-					rThread.join();
-				cout << "Number of Bugs (tid=" << ((*iupBugs).get())->GetThreadId() << ")=" << ((*iupBugs).get())->GetNumOfBugs() << "\n";
-				iupBugs++;
-			}
-			vThreads.erase(vThreads.begin(), vThreads.end());
-			vupBugs.erase(vupBugs.begin(), iupBugs);
-			cout << "Total number of Bugs: " << CBugT::GetTotNumOfBugs() << "\n";
-
-			iBugFilesPaths++;
-		}
-#endif
 #ifdef CHECK_TIME
 		end = clock();
 		time_spent = (double)(end - begin) / (CLOCKS_PER_SEC / 1000);
 		cout << "Time of program execution is:" << time_spent << "ms\n";
 #endif
 
-		return 0;
+		retVal = 0;
 	} catch (std::exception& e) {
 		std::cout << "Error: " << e.what() << std::endl;
 		std::cout << desc << std::endl;
-		return 1;
+		retVal = 1;
 	}
+	return retVal;
 }

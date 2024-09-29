@@ -14,15 +14,15 @@ typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
  * @brief loads from files Bug (pattern to be searched for) and Landscape (bigger file through which is searched) inside of program structures
  *
  * loads landscape and bug text files in container<string> data structures to provide searching. In case when multithreading preprocessor const is enabled
- * data is processed between multiple threads in parralel, and number of found Bugs is updated.
+ * data is processed between multiple threads in parallel, and number of found Bugs is updated.
  *
  * @param vm			program arguments stored in variables_map structure. Represent names of files which are storing data to be processed.
- * @param iBugFilesPaths	iterator to the vector of strings. Those strings are names of files which store Bug patterns to be serched for.
  * @param vBugFilesPaths	vector of strings. Those strings are names of files which store Bug patterns to be serched for. 
  * @return int (-1 is false, >=0 is true)
  */
-int processData(po::variables_map& vm, vector<string>::iterator& iBugFilesPaths, vector<string>& vBugFilesPaths) {
+int processData(po::variables_map& vm, vector<string>& vBugFilesPaths) {
 	unsigned int NumOfLines = 0;
+	vector<string>::iterator iBugFilesPaths = vBugFilesPaths.begin();
 #ifndef MULTI_THREAD
 	while (iBugFilesPaths != vBugFilesPaths.end()) {
 		string sFileName = (*iBugFilesPaths).substr((*iBugFilesPaths).rfind(DIR_SEPARATOR) + 1,
@@ -85,6 +85,15 @@ int processData(po::variables_map& vm, vector<string>::iterator& iBugFilesPaths,
 	return 0;
 }
 
+/**
+ * @brief loads Bug and Landscape files paths
+ *
+ * loads landscape and bug text files paths via program arguments. Then they are mapped using po::variables_map for easier handling.
+ *
+ * @param ac			number of program arguments (including program name)
+ * @param av			paths to the files following "--bug_file(s) arg --landscape_file arg" format
+ * @return int (!=0 is false, ==0 is true)
+ */
 int main(int ac, char** av)
 {
 #ifdef IPC
@@ -111,21 +120,14 @@ int main(int ac, char** av)
 		vector<string> vBugFilesPaths = vm["bug_file(s)"].as<vector<string> >();
 
 		std::cout << "Inputed arguments are:" << endl;
-		auto iBugFilesPaths = vBugFilesPaths.begin();
-		while (iBugFilesPaths != vBugFilesPaths.end())
-		{
-			if (iBugFilesPaths == vBugFilesPaths.begin())
-				std::cout << "bug_file(s):" << endl << *iBugFilesPaths << endl;
-			else
-				std::cout << *iBugFilesPaths << endl;
-
-			iBugFilesPaths++;
+		std::cout << "bug_file(s):" << endl;
+		for (auto elBugFilesPath : vBugFilesPaths) {
+			std::cout << elBugFilesPath << endl;
 		}
 		std::cout << " landscape_file:" << endl << vm["landscape_file"].as<std::string>() << std::endl;
 
-		po::notify(vm);						// for reporting exception
-		iBugFilesPaths = vBugFilesPaths.begin();
-		retVal = processData(vm, iBugFilesPaths, vBugFilesPaths);
+		po::notify(vm);							// for reporting exception
+		retVal = processData(vm, vBugFilesPaths);			// loads (and process) data inside of program structures. 
 		if (-1 == retVal) {
 			return retVal;
 		}

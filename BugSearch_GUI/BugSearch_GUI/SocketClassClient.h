@@ -1,3 +1,6 @@
+#ifndef SOCKETCLASSCLIENT_H
+#define SOCKETCLASSCLIENT_H
+
 // For program start via IPC
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,7 +9,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <netdb.h> 
+#include <netdb.h>
 #define PORT 8080
 
 class CSocketClient
@@ -23,3 +26,6 @@ public:
 
     ~CSocketClient();
 };
+
+
+#endif // SOCKETCLASSCLIENT_H

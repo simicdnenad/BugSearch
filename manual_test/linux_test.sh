@@ -61,7 +61,7 @@ function build_gui()
 {
   cd ${BUGSEARCH_BASE}/../build
   echo "Building app GUI version"
-  qmake ${BUGSEARCH_BASE}/Qt_GUI/Qt_GUI.pro
+  qmake ${BUGSEARCH_BASE}/BugSearch_GUI/BugSearch_GUI/BugSearch_GUI.pro
   make -f Makefile
 }
 

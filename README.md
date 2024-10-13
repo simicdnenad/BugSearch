@@ -46,7 +46,7 @@ g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0,
 Eclipse 2019-06 (4.12.0),  
 GCov and LCov installed,  
 QMake version 3.1,  
-Qt version 5.9.5,
+Qt Creator 4.5.2,  
 doxygen;  
 
 Windows 8,  

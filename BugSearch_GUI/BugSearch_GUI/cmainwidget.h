@@ -6,22 +6,26 @@
 #include <QApplication>
 #include <QProgressBar>
 #include <QTextBrowser>
+#include <QFileDialog>
 #include "SocketClassClient.h"
 
 class CMainWidget : public QWidget
 {
     Q_OBJECT
 private:
-    QPushButton* p_ButtonConnect;
+    QPushButton* p_ButtonProcess, *p_ButtonLandscape, *p_ButtonBug;
     QProgressBar* p_ProgressBar;
-    QTextBrowser* p_textBrowser;
+    QTextBrowser* p_textLandscapePath, *p_textBugPath, *p_textConnectionStatus;
+    QFileDialog* p_fileDialogLandscape, *p_fileDialogBug;
 public:
     explicit CMainWidget(QWidget *parent = nullptr);
 
 signals:
 
 public slots:
-    void onButtonReleased(); // Handler for button pressed
+    void onProcessButtonReleased(); // Handler for button pressed
+    void onLandscapeButtonClicked();
+    void onBugButtonClicked();
 };
 
 #endif // CMAINWIDGET_H

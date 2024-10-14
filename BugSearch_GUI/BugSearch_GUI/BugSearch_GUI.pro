@@ -12,4 +12,5 @@ SOURCES += \
 
 HEADERS += \
     cmainwidget.h \
-    SocketClassClient.h
+    SocketClassClient.h \
+    connstates.h

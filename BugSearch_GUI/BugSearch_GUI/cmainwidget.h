@@ -8,6 +8,7 @@
 #include <QTextBrowser>
 #include <QFileDialog>
 #include "SocketClassClient.h"
+#include "connstates.h"
 
 class CMainWidget : public QWidget
 {
@@ -17,9 +18,13 @@ private:
     QProgressBar* p_ProgressBar;
     QTextBrowser* p_textLandscapePath, *p_textBugPath, *p_textConnectionStatus;
     QFileDialog* p_fileDialogLandscape, *p_fileDialogBug;
+    CSocketClient m_socketClient;
+    EConnState e_connState = EConnState::NOT_CONNECTED;
 public:
     explicit CMainWidget(QWidget *parent = nullptr);
-
+private:
+    bool initCommunication();
+    bool forwardFileNames();
 signals:
 
 public slots:

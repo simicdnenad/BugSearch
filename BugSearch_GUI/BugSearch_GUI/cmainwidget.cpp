@@ -33,16 +33,35 @@ CMainWidget::CMainWidget(QWidget *parent) : QWidget(parent)
 }
 
 // Handler for button click
-void CMainWidget::onProcessButtonReleased()
-{
-    CSocketClient SocketClient;
-
-     p_textConnectionStatus->clear();
-    if (true == SocketClient.initSocket()) {
-        p_textConnectionStatus->append("Client Socket successfully connected.");
-    }
-    else {
-        p_textConnectionStatus->append("Client Socket failed to connect!");
+void CMainWidget::onProcessButtonReleased() {
+    p_textConnectionStatus->clear();
+    switch(e_connState) {
+        case EConnState::NOT_CONNECTED:
+        {
+            bool bStatus = false;
+            bStatus = initCommunication();
+            if (true == bStatus) {
+                e_connState = EConnState::CONNECTED;
+            }
+            break;
+        }
+        case EConnState::CONNECTED:
+        {
+            if (!(p_textLandscapePath->toPlainText().isEmpty()) && !(p_textBugPath->toPlainText().isEmpty())) {
+                if (true == forwardFileNames()) {
+                    e_connState = EConnState::PROCESSING;
+                } else {
+                    p_textConnectionStatus->append("Problem in communicatin with the app!");;
+                }
+            } else {
+                p_textConnectionStatus->append("Landscape or Bug files not selected. Please select both of them!");
+            }
+            break;
+        }
+        default:
+        {
+            break;
+        }
     }
 }
 
@@ -61,6 +80,7 @@ void CMainWidget::onLandscapeButtonClicked() {
     QStringList::iterator it = fileNames.begin();
     if (it != fileNames.end()) {
         // if list not empty (file is selected)
+        p_textLandscapePath->clear();
         p_textLandscapePath->append(*it);
     }
 }
@@ -79,6 +99,24 @@ void CMainWidget::onBugButtonClicked() {
     QStringList::iterator it = fileNames.begin();
     if (it != fileNames.end()) {
         // if list not empty (file is selected)
+        p_textBugPath->clear();
         p_textBugPath->append(*it);
     }
+}
+
+bool CMainWidget::initCommunication() {
+    bool retVal = false;
+
+    if (true == m_socketClient.initSocket()) {
+        p_textConnectionStatus->append("Client Socket successfully connected.");
+        retVal = true;
+    }
+    else {
+        p_textConnectionStatus->append("Client Socket failed to connect!");
+    }
+    return retVal;
+}
+
+bool CMainWidget::forwardFileNames() {
+    return false;
 }

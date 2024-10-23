@@ -2,10 +2,11 @@
 #define CONNSTATE_H
 
 enum class EConnState :uint8_t {
-    NOT_CONNECTED = 0x00U,
-    CONNECTED = 0x01U,
-    PROCESSING = 0x02U,
-    FINISHED = 0x03U,
+    FILES_NOT_SELECTED = 0x00U,
+    NOT_CONNECTED = 0x01U,
+    CONNECTED = 0x02U,
+    PROCESSING = 0x03U,
+    FINISHED = 0x04U
 };
 
 #endif // CONNSTATE_H

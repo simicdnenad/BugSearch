@@ -35,4 +35,7 @@
 build/
 #lib/
 /.metadata/
+html/
+latex/
+out/
 build-BugSearch_GUI-Desktop-Debug/

@@ -1,6 +1,10 @@
 #include "cmainwidget.h"
+#include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QMessageBox>
 
-CMainWidget::CMainWidget(QWidget *parent) : QWidget(parent)
+CMainWidget::CMainWidget(QWidget *parent) : QMainWindow(parent)
 {
     this->setFixedSize(1000, 500);
     // Landsape file components
@@ -30,31 +34,51 @@ CMainWidget::CMainWidget(QWidget *parent) : QWidget(parent)
     p_ProgressBar->setRange(0, 100);
     p_ProgressBar->setValue(0);
     p_ProgressBar->setGeometry(20, 200, 300, 30);
+
+    createActions();
+}
+
+void CMainWidget::createActions() {
+    QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
+    const QIcon aboutIcon = QIcon::fromTheme("document-about", QIcon(":/images/about.png"));
+    QAction *aboutBugApp = new QAction(aboutIcon, tr("&About"), this);
+    aboutBugApp->setShortcuts(QKeySequence::HelpContents);
+    aboutBugApp->setStatusTip(tr("Shows info about the program"));
+    helpMenu->addAction(aboutBugApp);
+    connect(aboutBugApp, SIGNAL(triggered()), this, SLOT(onAboutMenuClicked()));
 }
 
 // Handler for button click
 void CMainWidget::onProcessButtonReleased() {
     p_textConnectionStatus->clear();
     switch(e_connState) {
+        case EConnState::FILES_NOT_SELECTED:
+        {
+            if (!(p_textLandscapePath->toPlainText().isEmpty()) && !(p_textBugPath->toPlainText().isEmpty())) {
+                    e_connState = EConnState::NOT_CONNECTED;
+                    p_textConnectionStatus->append("Should connect to the BugSearch App!");;
+            } else {
+                p_textConnectionStatus->append("Landscape or Bug files not selected. Please select both of them!");
+            }
+            break;
+        }
         case EConnState::NOT_CONNECTED:
         {
             bool bStatus = false;
             bStatus = initCommunication();
             if (true == bStatus) {
                 e_connState = EConnState::CONNECTED;
+            } else {
+                p_textConnectionStatus->append("Problem in communication with BugSeach app!");
             }
             break;
         }
         case EConnState::CONNECTED:
         {
-            if (!(p_textLandscapePath->toPlainText().isEmpty()) && !(p_textBugPath->toPlainText().isEmpty())) {
-                if (true == forwardFileNames()) {
-                    e_connState = EConnState::PROCESSING;
-                } else {
-                    p_textConnectionStatus->append("Problem in communicatin with the app!");;
-                }
+            if (true == forwardFileNames()) {
+                e_connState = EConnState::PROCESSING;
             } else {
-                p_textConnectionStatus->append("Landscape or Bug files not selected. Please select both of them!");
+                p_textConnectionStatus->append("Problem in communication with BugSeach app!");
             }
             break;
         }
@@ -119,4 +143,23 @@ bool CMainWidget::initCommunication() {
 
 bool CMainWidget::forwardFileNames() {
     return false;
+}
+
+void CMainWidget::closeEvent(QCloseEvent *event) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "BugSearch_GUI", "Quit?",
+                                  QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
+
+void CMainWidget::onAboutMenuClicked() {
+    QMessageBox::StandardButton about;
+    QString strInfo = "Before starting the search, Landspace and Bug files should be selected. "
+                      "Inside Landscape file is searched for a content of Bug file. \n";
+    about = QMessageBox::information(this, "BugSearch_GUI",
+                                  strInfo, QMessageBox::Ok);
 }

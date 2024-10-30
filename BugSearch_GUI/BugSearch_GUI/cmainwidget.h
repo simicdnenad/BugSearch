@@ -21,6 +21,8 @@ private:
     QFileDialog* p_fileDialogLandscape, *p_fileDialogBug;
     CSocketClient m_socketClient;
     EConnState e_connState = EConnState::FILES_NOT_SELECTED;
+    QFile* p_fLandscapeFile = nullptr, *p_fBugFile = nullptr;
+    QTextEdit* p_editLandscapeFile = nullptr, *p_editBugFile = nullptr;
 protected:
     void closeEvent(QCloseEvent *event) override;
 public:
@@ -29,6 +31,8 @@ private:
     bool initCommunication();
     bool forwardFileNames();
     void createActions();
+    void showBugFileContent(QString& strFileName);
+    void showLandscapeFileContent(QString& strFileName);
 signals:
 
 public slots:

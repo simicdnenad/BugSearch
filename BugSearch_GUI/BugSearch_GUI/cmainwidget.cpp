@@ -3,6 +3,8 @@
 #include <QMenuBar>
 #include <QToolBar>
 #include <QMessageBox>
+#include <QTextEdit>
+#include <QTextStream>
 
 CMainWidget::CMainWidget(QWidget *parent) : QMainWindow(parent)
 {
@@ -106,6 +108,7 @@ void CMainWidget::onLandscapeButtonClicked() {
         // if list not empty (file is selected)
         p_textLandscapePath->clear();
         p_textLandscapePath->append(*it);
+        showLandscapeFileContent(*it);
     }
 }
 void CMainWidget::onBugButtonClicked() {
@@ -125,6 +128,7 @@ void CMainWidget::onBugButtonClicked() {
         // if list not empty (file is selected)
         p_textBugPath->clear();
         p_textBugPath->append(*it);
+        showBugFileContent(*it);
     }
 }
 
@@ -150,6 +154,20 @@ void CMainWidget::closeEvent(QCloseEvent *event) {
     reply = QMessageBox::question(this, "BugSearch_GUI", "Quit?",
                                   QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes) {
+        if (nullptr != p_fBugFile ) {
+            // close and free old resources
+            p_editBugFile->close();
+            delete p_editBugFile;
+            p_fBugFile->close();
+            delete p_fBugFile;
+        }
+        if (nullptr != p_fLandscapeFile ) {
+            // close and free old resources
+            p_editLandscapeFile->close();
+            delete p_editLandscapeFile;
+            p_fLandscapeFile->close();
+            delete p_fLandscapeFile;
+        }
         event->accept();
     } else {
         event->ignore();
@@ -162,4 +180,42 @@ void CMainWidget::onAboutMenuClicked() {
                       "Inside Landscape file is searched for a content of Bug file. \n";
     about = QMessageBox::information(this, "BugSearch_GUI",
                                   strInfo, QMessageBox::Ok);
+}
+
+void CMainWidget::showLandscapeFileContent(QString& strFileName){
+    if (nullptr != p_fLandscapeFile ) {
+        // close and free old resources
+        p_editLandscapeFile->close();
+        delete p_editLandscapeFile;
+        p_fLandscapeFile->close();
+        delete p_fLandscapeFile;
+    }
+    // alocate new one
+    p_fLandscapeFile = new QFile (strFileName);
+    p_editLandscapeFile = new QTextEdit();
+
+    if (p_fLandscapeFile->open(QIODevice::ReadOnly)) {
+        QTextStream stream(p_fLandscapeFile);
+        p_editLandscapeFile->setPlainText( stream.readAll() );
+        p_editLandscapeFile->show();
+    }
+}
+
+void CMainWidget::showBugFileContent(QString& strFileName){
+    if (nullptr != p_fBugFile ) {
+        // close and free old resources
+        p_editBugFile->close();
+        delete p_editBugFile;
+        p_fBugFile->close();
+        delete p_fBugFile;
+    }
+    // alocate new one
+    p_fBugFile = new QFile (strFileName);
+    p_editBugFile = new QTextEdit();
+
+    if (p_fBugFile->open(QIODevice::ReadOnly)) {
+        QTextStream stream(p_fBugFile);
+        p_editBugFile->setPlainText( stream.readAll() );
+        p_editBugFile->show();
+    }
 }

@@ -81,6 +81,7 @@ void CMainWidget::onProcessButtonReleased() {
                 e_connState = EConnState::PROCESSING;
             } else {
                 p_textConnectionStatus->append("Problem in communication with BugSeach app!");
+                e_connState = EConnState::UNKNOWN_FAILURE;
             }
             break;
         }
@@ -146,7 +147,20 @@ bool CMainWidget::initCommunication() {
 }
 
 bool CMainWidget::forwardFileNames() {
-    return false;
+    bool bRet = true;
+    if (m_socketClient.setTxData(reinterpret_cast<const uint8_t*>(p_textLandscapePath->toPlainText().toStdString().c_str()),
+                                 strlen(p_textLandscapePath->toPlainText().toStdString().c_str())+1) == true) {
+        if ((bRet = m_socketClient.SendMsg()) == true) {
+            p_textConnectionStatus->append("Landscape file name sent successfully to Bug app.");
+        } else {
+            p_textConnectionStatus->append("Failed to send Landscape to Bug app.");
+        }
+    } else {
+        p_textConnectionStatus->append("Landscape file name too log.");
+        bRet = false;
+    }
+
+    return bRet;
 }
 
 void CMainWidget::closeEvent(QCloseEvent *event) {

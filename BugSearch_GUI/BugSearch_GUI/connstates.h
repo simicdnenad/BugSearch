@@ -6,7 +6,8 @@ enum class EConnState :uint8_t {
     NOT_CONNECTED = 0x01U,
     CONNECTED = 0x02U,
     PROCESSING = 0x03U,
-    FINISHED = 0x04U
+    FINISHED = 0x04U,
+    UNKNOWN_FAILURE = 0x05U
 };
 
 #endif // CONNSTATE_H

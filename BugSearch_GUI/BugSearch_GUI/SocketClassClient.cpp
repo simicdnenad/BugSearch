@@ -28,6 +28,29 @@ bool CSocketClient::initSocket(){
     return true;
 }
 
+bool CSocketClient::SendMsg(void) {
+    bool bRet = true;
+    int n = write(m_SockFd, m_aTxBuff, m_uTxMsgIdx);
+    if (n < m_uTxMsgIdx) {
+        std::cout << "ERROR sending data to Bug app!" << std::endl;
+        bRet = false;
+    }
+
+    return bRet;
+}
+
+bool CSocketClient::setTxData(const uint8_t *pTxBuff, uint8_t uTxMsgLen) {
+    bool bRet = true;
+    if (TX_BUFF_SIZE < m_uTxMsgIdx + uTxMsgLen) {
+        bRet = false;
+    } else {
+        memcpy(m_aTxBuff + m_uTxMsgIdx, pTxBuff, uTxMsgLen);
+        m_uTxMsgIdx += uTxMsgLen;
+    }
+
+    return bRet;
+}
+
 
 CSocketClient::~CSocketClient()
 {

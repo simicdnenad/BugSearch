@@ -96,15 +96,19 @@ int processData(po::variables_map& vm, vector<string>& vBugFilesPaths) {
  */
 int main(int ac, char** av)
 {
+	int retVal = 0;
 #ifdef IPC
 	CSocket socketWaitClient;
 	socketWaitClient.initSocket();
 	std::cout << "Waiting IPC command for program start!" << endl;
-	socketWaitClient.listenSocket();
+	if (socketWaitClient.listenSocket() == false) {
+		retVal = 1;
+		return retVal;
+	}
+	socketWaitClient.ReadMsg();
 #endif
 	po::variables_map vm;
 	po::options_description desc("Allowed Options");
-	int retVal = 0;
 
 	// declare arguments (boost)
 	desc.add_options()

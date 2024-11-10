@@ -10,20 +10,23 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <cstdint>
 #define PORT 8080
+#define TX_BUFF_SIZE 256
 
 class CSocketClient
 {
     int m_SockFd, m_Portno;
-    char a_Buffer[256];
     struct sockaddr_in m_ServAddr;
-    int m_N;
     struct hostent *m_ServerName;
+    uint8_t m_aTxBuff[TX_BUFF_SIZE] = {0}; //!< tx buffer
+    uint8_t m_uTxMsgIdx = 0;               //!< current message index
 
 public:
     CSocketClient()=default;
     bool initSocket();
-
+    bool setTxData(const uint8_t *pTxBuff, uint8_t uTxMsgLen);
+    bool SendMsg(void);
     ~CSocketClient();
 };
 

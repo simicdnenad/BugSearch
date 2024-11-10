@@ -24,7 +24,9 @@ bool CSocket::initSocket(){
 	return true;
 }
 
-bool CSocket::listenSocket(){
+bool CSocket::listenSocket() {
+	bool bRet = true;
+
 	listen(m_SockFd,5);
 	m_CliLen = sizeof(m_CliAddr);
 	m_NewSockFd = accept(m_SockFd,
@@ -33,9 +35,24 @@ bool CSocket::listenSocket(){
 	if (m_NewSockFd < 0)
 	{
 		std::cout << "ERROR on accept" << std::endl;
-		return false;
+		bRet = false;
 	}
-	return true;
+	return bRet;
+}
+
+bool CSocket::ReadMsg(void) {
+	bool bRet = true;
+
+	int iNum = read(m_NewSockFd, &m_aRxBuff[m_uRxMsgIdx], RX_BUFF_SIZE - m_uRxMsgIdx);
+	if (iNum > 0 && iNum < RX_BUFF_SIZE) {
+		m_uRxMsgIdx += iNum;
+		std::cout << "Socket read " << iNum << " bytes." << std::endl;
+	} else {
+		std::cout << "Error reading data from socket or receive buffer is full!" << std::endl;
+		bRet = false;
+	}
+
+	return bRet;
 }
 
 CSocket::~CSocket()

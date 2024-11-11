@@ -70,6 +70,7 @@ void CMainWidget::onProcessButtonReleased() {
             bStatus = initCommunication();
             if (true == bStatus) {
                 e_connState = EConnState::CONNECTED;
+                p_ProgressBar->setValue(10);
             } else {
                 p_textConnectionStatus->append("Problem in communication with BugSeach app!");
             }
@@ -211,6 +212,7 @@ void CMainWidget::showLandscapeFileContent(QString& strFileName){
     if (p_fLandscapeFile->open(QIODevice::ReadOnly)) {
         QTextStream stream(p_fLandscapeFile);
         p_editLandscapeFile->setPlainText( stream.readAll() );
+        p_editLandscapeFile->setWindowFilePath(strFileName);
         p_editLandscapeFile->show();
     }
 }
@@ -230,6 +232,7 @@ void CMainWidget::showBugFileContent(QString& strFileName){
     if (p_fBugFile->open(QIODevice::ReadOnly)) {
         QTextStream stream(p_fBugFile);
         p_editBugFile->setPlainText( stream.readAll() );
+        p_editBugFile->setWindowFilePath(strFileName);
         p_editBugFile->show();
     }
 }

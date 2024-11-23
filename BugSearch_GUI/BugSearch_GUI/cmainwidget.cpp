@@ -26,8 +26,6 @@ CMainWidget::CMainWidget(QWidget *parent) : QMainWindow(parent)
     // Load the files into the app and start the searching for Bug pattern
     p_ButtonProcess = new QPushButton("Connect to BugSearch app", this);
     p_ButtonProcess->setGeometry(20, 150, 300, 30);
-    p_textConnectionStatus = new QTextBrowser(this);
-    p_textConnectionStatus->setGeometry(350, 150, 300, 30);
     // Connect the Buttons "released" signal to CMainWidgets onButtonReleased method.
     connect(p_ButtonProcess, SIGNAL(released()), this, SLOT(onProcessButtonReleased()));
     // Create a progress bar
@@ -36,6 +34,8 @@ CMainWidget::CMainWidget(QWidget *parent) : QMainWindow(parent)
     p_ProgressBar->setRange(0, 100);
     p_ProgressBar->setValue(0);
     p_ProgressBar->setGeometry(20, 200, 300, 30);
+    // Enable status bar for showing program state
+    statusBar()->showMessage(tr("Ready"));
 
     createActions();
 }
@@ -52,17 +52,15 @@ void CMainWidget::createActions() {
 
 // Handler for button click
 void CMainWidget::onProcessButtonReleased() {
-    p_textConnectionStatus->clear();
     switch(e_connState) {
         case EConnState::FILES_NOT_SELECTED:
         {
             if (!(p_textLandscapePath->toPlainText().isEmpty()) && !(p_textBugPath->toPlainText().isEmpty())) {
-                    e_connState = EConnState::NOT_CONNECTED;
-                    p_textConnectionStatus->append("Should connect to the BugSearch App!");;
+                e_connState = EConnState::NOT_CONNECTED;
             } else {
-                p_textConnectionStatus->append("Landscape or Bug files not selected. Please select both of them!");
+                statusBar()->showMessage("Landscape or Bug files not selected. Please select both of them!");
+                break;
             }
-            break;
         }
         case EConnState::NOT_CONNECTED:
         {
@@ -71,8 +69,10 @@ void CMainWidget::onProcessButtonReleased() {
             if (true == bStatus) {
                 e_connState = EConnState::CONNECTED;
                 p_ProgressBar->setValue(10);
+                statusBar()->showMessage("Successfully connected to the BugSearch app. Click button again to forward file paths and to start data processing.");
+                p_ButtonProcess->setText("Start data processing");
             } else {
-                p_textConnectionStatus->append("Problem in communication with BugSeach app!");
+                statusBar()->showMessage("Problem in communication with BugSeach app!");
             }
             break;
         }
@@ -81,7 +81,7 @@ void CMainWidget::onProcessButtonReleased() {
             if (true == forwardFileNames()) {
                 e_connState = EConnState::PROCESSING;
             } else {
-                p_textConnectionStatus->append("Problem in communication with BugSeach app!");
+                statusBar()->showMessage("Problem in communication with BugSeach app!");
                 e_connState = EConnState::UNKNOWN_FAILURE;
             }
             break;
@@ -138,11 +138,11 @@ bool CMainWidget::initCommunication() {
     bool retVal = false;
 
     if (true == m_socketClient.initSocket()) {
-        p_textConnectionStatus->append("Client Socket successfully connected.");
+        statusBar()->showMessage("Client Socket successfully connected.");
         retVal = true;
     }
     else {
-        p_textConnectionStatus->append("Client Socket failed to connect!");
+        statusBar()->showMessage("Client Socket failed to connect!");
     }
     return retVal;
 }
@@ -150,14 +150,16 @@ bool CMainWidget::initCommunication() {
 bool CMainWidget::forwardFileNames() {
     bool bRet = true;
     if (m_socketClient.setTxData(reinterpret_cast<const uint8_t*>(p_textLandscapePath->toPlainText().toStdString().c_str()),
-                                 strlen(p_textLandscapePath->toPlainText().toStdString().c_str())+1) == true) {
+                                 strlen(p_textLandscapePath->toPlainText().toStdString().c_str())) == true   &&
+        m_socketClient.setTxData(reinterpret_cast<const uint8_t*>(p_textBugPath->toPlainText().toStdString().c_str()),
+                                 strlen(p_textBugPath->toPlainText().toStdString().c_str())) == true) {
         if ((bRet = m_socketClient.SendMsg()) == true) {
-            p_textConnectionStatus->append("Landscape file name sent successfully to Bug app.");
+            statusBar()->showMessage("File paths successfully sent to BugSearch app and data processing has started.");
         } else {
-            p_textConnectionStatus->append("Failed to send Landscape to Bug app.");
+            statusBar()->showMessage("Failed to send file paths to BugSearch app.");
         }
     } else {
-        p_textConnectionStatus->append("Landscape file name too log.");
+        statusBar()->showMessage("Landscape file name too log.");
         bRet = false;
     }
 

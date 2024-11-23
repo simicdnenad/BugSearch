@@ -8,6 +8,7 @@
 #include <QTextBrowser>
 #include <QFileDialog>
 #include <QCloseEvent>
+#include <QStatusBar>
 #include "SocketClassClient.h"
 #include "connstates.h"
 
@@ -17,7 +18,7 @@ class CMainWidget : public QMainWindow
 private:
     QPushButton* p_ButtonProcess, *p_ButtonLandscape, *p_ButtonBug;
     QProgressBar* p_ProgressBar;
-    QTextBrowser* p_textLandscapePath, *p_textBugPath, *p_textConnectionStatus;
+    QTextBrowser* p_textLandscapePath, *p_textBugPath;
     QFileDialog* p_fileDialogLandscape, *p_fileDialogBug;
     CSocketClient m_socketClient;
     EConnState e_connState = EConnState::FILES_NOT_SELECTED;

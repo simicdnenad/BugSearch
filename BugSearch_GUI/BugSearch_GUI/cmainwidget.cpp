@@ -159,7 +159,7 @@ bool CMainWidget::forwardFileNames() {
             statusBar()->showMessage("Failed to send file paths to BugSearch app.");
         }
     } else {
-        statusBar()->showMessage("Landscape file name too log.");
+        statusBar()->showMessage("Landscape and Bug file paths are too long.");
         bRet = false;
     }
 

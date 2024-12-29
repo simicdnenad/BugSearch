@@ -39,6 +39,20 @@ bool CSocketClient::SendMsg(void) {
     return bRet;
 }
 
+bool CSocketClient::ReceiveMsg(void) {
+    bool bRet = true;
+    int i = read(m_SockFd, &m_aRxBuff[m_uRxMsgIdx], RX_BUFF_SIZE - m_uRxMsgIdx);
+
+    if (i > 0) {
+        m_uRxMsgIdx += i;
+    } else {
+        std::cout << "ERROR receiving data from Bug app!" << std::endl;
+        bRet = false;
+    }
+
+    return bRet;
+}
+
 bool CSocketClient::setTxData(const uint8_t *pTxBuff, uint8_t uTxMsgLen) {
     bool bRet = true;
     if (TX_BUFF_SIZE < m_uTxMsgIdx + uTxMsgLen) {

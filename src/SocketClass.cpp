@@ -56,6 +56,11 @@ bool CSocket::ReadMsg(void) {
 	return bRet;
 }
 
+inline const uint8_t CSocket::getRxBuff(const uint8_t *pRxBuff, const uint8_t uPos /* =0 */) const {
+	pRxBuff = m_aRxBuff + uPos;
+	return m_uRxMsgIdx - uPos;
+}
+
 CSocket::~CSocket()
 {
 	std::cout << "Closing opened sockets." << std::endl;

@@ -106,7 +106,7 @@ int main(int ac, char** av)
 		return retVal;
 	}
 	socketWaitClient.ReadMsg();
-#endif
+#else
 	po::variables_map vm;
 	po::options_description desc("Allowed Options");
 
@@ -114,15 +114,32 @@ int main(int ac, char** av)
 	desc.add_options()
 		("bug_file(s)", po::value<vector<string>>()->multitoken(), "Provide relative path to \"bug.nfo\" file(s)")
 		("landscape_file", po::value<std::string>()->required(), "Provide relative path to \"landscape.nfo\" file");
+#endif
 	try {
 #ifdef CHECK_TIME
 		clock_t begin, end;
 		double time_spent;
 		begin = clock();
 #endif
+#ifdef IPC
+		vector<string> vBugFilesPaths;
+		string strPath="";
+		const uint8_t *cstrPath=0;
+		unsigned uWhitePos=0;
+		// get first argument
+		socketWaitClient.getRxBuff(cstrPath);
+		//strPath.assign(cstrPath);
+		uWhitePos = strPath.find(' ');
+		strPath = strPath.substr(0,uWhitePos);
+		vBugFilesPaths.push_back(strPath);
+		// get second argument
+		socketWaitClient.getRxBuff(cstrPath, uWhitePos + 1);
+		//strPath.assign(cstrPath);
+		vBugFilesPaths.push_back(strPath);
+#else
 		po::store(po::parse_command_line(ac, av, desc), vm);
 		vector<string> vBugFilesPaths = vm["bug_file(s)"].as<vector<string> >();
-
+#endif
 		std::cout << "Inputed arguments are:" << endl;
 		std::cout << "bug_file(s):" << endl;
 		for (auto elBugFilesPath : vBugFilesPaths) {

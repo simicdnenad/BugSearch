@@ -124,29 +124,36 @@ int main(int ac, char** av)
 #ifdef IPC
 		vector<string> vBugFilesPaths;
 		string strPath="";
-		const uint8_t *cstrPath=0;
+		string strPathComplete="";
+		/**const*/ uint8_t *cstrPath=0;
 		unsigned uWhitePos=0;
 		// get first argument
 		socketWaitClient.getRxBuff(cstrPath);
-		//strPath.assign(cstrPath);
+		strPath.assign((char*)(cstrPath));
 		uWhitePos = strPath.find(' ');
 		strPath = strPath.substr(0,uWhitePos);
-		vBugFilesPaths.push_back(strPath);
+		strPath = "--bug_file " + strPath;
+		strPathComplete += strPath;
+		// vBugFilesPaths.push_back(strPath);
 		// get second argument
 		socketWaitClient.getRxBuff(cstrPath, uWhitePos + 1);
-		//strPath.assign(cstrPath);
+		strPath.assign((char*)(cstrPath));
+		strPath = "--landscape_file " + strPath;
+		strPathComplete += strPath;
 		vBugFilesPaths.push_back(strPath);
+		po::store(po::parse_command_line(3/**ac*/, /**av*/strPathComplete.c_str(), desc), vm);
+		//  $TARGET --bug_file ${BUGSEARCH_BASE}/manual_test/bug.nfo --landscape_file ${BUGSEARCH_BASE}/manual_test/landscape.nfo
 #else
 		po::store(po::parse_command_line(ac, av, desc), vm);
 		vector<string> vBugFilesPaths = vm["bug_file(s)"].as<vector<string> >();
-#endif
+
 		std::cout << "Inputed arguments are:" << endl;
 		std::cout << "bug_file(s):" << endl;
 		for (auto elBugFilesPath : vBugFilesPaths) {
 			std::cout << elBugFilesPath << endl;
 		}
 		std::cout << " landscape_file:" << endl << vm["landscape_file"].as<std::string>() << std::endl;
-
+#endif
 		po::notify(vm);							// for reporting exception
 		retVal = processData(vm, vBugFilesPaths);			// loads (and process) data inside of program structures. 
 		if (-1 == retVal) {

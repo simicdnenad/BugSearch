@@ -97,8 +97,9 @@ function create_doxygen_docu()
 
 function main()
 {
-# print_info
-if [[ "$1" != "GUI_ONLY" ]]; then
+# Build everyting in case of no arguments provided
+if [ "$#" -eq 0 ]  || [ "$1" == "IPC" ];
+then
   printf "\n"
   create_build_dir
   printf "\n"
@@ -115,9 +116,16 @@ if [[ "$1" != "GUI_ONLY" ]]; then
   run_unit_tests
   printf "\n"
   create_doxygen_docu
-else
+elif [[ "$1" == "clean" ]];
+then
+  printf "Cleaning build dir \n"
+  rm -rf ../build
+elif [[ "$1" == "GUI_ONLY" ]];
+then
   printf "\n"
   build_gui
+else
+  printf "Unknown argument!\n"
 fi
 }
 

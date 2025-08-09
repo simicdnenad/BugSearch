@@ -18,11 +18,11 @@ Small application which is searching throught "/manual_test/landscape.nfo" file 
 │   ├── linux_test.sh
 │   ├── spiderman_2.nfo
 │   └── spiderman.nfo
-├── Qt_GUI
+├── BugSearch_GUI
 │   ├── main.cpp
 │   ├── mainwidget.cpp
 │   ├── mainwidget.h
-│   ├── Qt_GUI.pro
+│   ├── BugSearch_GUI.pro
 │   ├── SocketClassClient.cpp
 │   └── SocketClassClient.h
 ├── README.md
@@ -64,7 +64,7 @@ Clone repo with:
 ```
     BugSearch/manual_test/linux_test.sh;
 ```
-1.1 If you want to use Sockets (for IPC) between GUI Client and Search App run:
+1.1 If you want to use GUI Client for file selection run:
 ```
     BugSearch/manual_test/linux_test.sh IPC;
 ```

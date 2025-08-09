@@ -68,8 +68,8 @@ function build_gui()
 function run_GUI()
 {
   if [[ "$1" == "IPC" ]]; then
-    echo "Starting GUI app.\n"
-    ${BUGSEARCH_BASE}/../build/Qt_GUI &
+    echo "Starting GUI app"
+    ${BUGSEARCH_BASE}/../build/BugSearch_GUI &
   fi
 }
 

@@ -85,19 +85,19 @@ int processData(po::variables_map& vm, vector<string>& vBugFilesPaths) {
 	return 0;
 }
 
+#ifdef IPC
 /**
  * @brief loads Bug and Landscape files paths
  *
- * loads landscape and bug text files paths via program arguments. Then they are mapped using po::variables_map for easier handling.
+ * loads landscape and bug text files paths from GUI application via IPC.
+ * Number of bug patterns found in landscape file is calculated.
  *
- * @param ac			number of program arguments (including program name)
- * @param av			paths to the files following "--bug_file(s) arg --landscape_file arg" format
  * @return int (!=0 is false, ==0 is true)
  */
-int main(int ac, char** av)
+int main()
 {
 	int retVal = 0;
-#ifdef IPC
+
 	CSocket socketWaitClient;
 	socketWaitClient.initSocket();
 	std::cout << "Waiting IPC command for program start!" << endl;
@@ -106,7 +106,23 @@ int main(int ac, char** av)
 		return retVal;
 	}
 	socketWaitClient.ReadMsg();
-#endif
+	return retVal;
+}
+
+#else
+/**
+ * @brief loads Bug and Landscape files paths
+ *
+ * loads landscape and bug text files paths via program arguments. Then they are mapped using po::variables_map for easier handling.
+ * Number of bug patterns found in landscape file is calculated.
+ *
+ * @param ac			number of program arguments (including program name)
+ * @param av			paths to the files following "--bug_file(s) arg --landscape_file arg" format
+ * @return int (!=0 is false, ==0 is true)
+ */
+int main(int ac, char** av)
+{
+	int retVal = 0;
 	po::variables_map vm;
 	po::options_description desc("Allowed Options");
 
@@ -149,3 +165,4 @@ int main(int ac, char** av)
 	}
 	return retVal;
 }
+#endif

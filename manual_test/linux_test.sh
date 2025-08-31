@@ -9,16 +9,17 @@ then
   BUGSEARCH_BASE=$(readlink -f "$0")
   BUGSEARCH_BASE=$(dirname "${BUGSEARCH_BASE}")
   BUGSEARCH_BASE="${BUGSEARCH_BASE}/.."
+  BUILD_DIR=${BUGSEARCH_BASE}/../build
 fi
 
 SYSTEM="uname"
-TARGET="${BUGSEARCH_BASE}/../build/src/BugSearchLinux"
-TEST="${BUGSEARCH_BASE}/../build/tst/BugSearch_tst"
+TARGET="${BUILD_DIR}/src/BugSearchLinux"
+TEST="${BUILD_DIR}/tst/BugSearch_tst"
 
 function create_build_dir() {
-  if [ ! -r "${BUGSEARCH_BASE}/../build" ]; then
+  if [ ! -r ${BUILD_DIR} ]; then
     echo "Creating /build folder in sibling folder of cloned repo"
-    mkdir ${BUGSEARCH_BASE}/../build
+    mkdir ${BUILD_DIR}
   fi
 }
 
@@ -44,7 +45,7 @@ function clone_gtest_submodule()
 
 function build_app()
 {
-  cd ${BUGSEARCH_BASE}/../build
+  cd ${BUILD_DIR}
   echo "Generating Eclipse project file"
   if [[ "$1" == "IPC" ]]; then
     # comile project with usage of Sockets
@@ -59,17 +60,18 @@ function build_app()
 
 function build_gui()
 {
-  cd ${BUGSEARCH_BASE}/../build
+  cd ${BUILD_DIR}
   echo "Building app GUI version"
-  qmake ${BUGSEARCH_BASE}/BugSearch_GUI/BugSearch_GUI/BugSearch_GUI.pro
+  qmake ${BUGSEARCH_BASE}/BugSearch_GUI/BugSearch_GUI/BugSearch_GUI.pro "CONFIG+=release"
   make -f Makefile
 }
 
 function run_GUI()
 {
   if [[ "$1" == "IPC" ]]; then
+    cp ${BUGSEARCH_BASE}/BugSearch_GUI/BugSearch_GUI/res/logo.png ${BUILD_DIR}
     echo "Starting GUI app"
-    ${BUGSEARCH_BASE}/../build/BugSearch_GUI &
+    ${BUILD_DIR}/BugSearch_GUI &
   fi
 }
 
@@ -84,7 +86,7 @@ function run_unit_tests()
   echo "Running Unit Tests."
   $TEST
   echo "Creating Code Coverage Report."
-  lcov -c -d ${BUGSEARCH_BASE}/../build/tst/CMakeFiles/BugSearch_tst.dir/ -o main_coverage.info
+  lcov -c -d ${BUILD_DIR}/tst/CMakeFiles/BugSearch_tst.dir/ -o main_coverage.info
   genhtml main_coverage.info --output-directory ${BUGSEARCH_BASE}/out
 }
 
@@ -119,7 +121,7 @@ then
 elif [[ "$1" == "clean" ]];
 then
   printf "Cleaning build dir \n"
-  rm -rf ../build
+  rm -rf ${BUILD_DIR}
 elif [[ "$1" == "GUI_ONLY" ]];
 then
   printf "\n"

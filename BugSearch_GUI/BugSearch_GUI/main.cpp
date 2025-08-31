@@ -20,9 +20,13 @@ std::shared_ptr<char[]> icoPath(const char* strBinPath) {
     // go back one directory and add icon's path
     std::size_t found = strPath.find_last_of("/");
     strPath = strPath.substr(0,found);
+#ifdef QT_DEBUG
     found = strPath.find_last_of("/");
     strPath = strPath.substr(0,found);
-    strPath += "/BugSearch_GUI/download.png";
+    strPath += "/BugSearch_GUI/res/logo.png";
+#else
+    strPath += "/logo.png";
+#endif
     strcpy(pCwd.get(), strPath.c_str());
 
     return pCwd;

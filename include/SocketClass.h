@@ -24,6 +24,7 @@ public:
     bool initSocket();
     bool listenSocket();
     bool ReadMsg(void);
+    const uint8_t GetBuff( uint8_t*& pBuff );
 
     ~CSocket();
 };

@@ -106,6 +106,13 @@ int main()
 		return retVal;
 	}
 	socketWaitClient.ReadMsg();
+	uint8_t* pPaths = 0;
+	uint8_t uSize = socketWaitClient.GetBuff(pPaths);
+
+	std::string sPaths((char*)pPaths, uSize);
+	cout << "Received file paths: " << sPaths << endl;
+	// TODO: forward paths to data processing methods.
+
 	return retVal;
 }
 

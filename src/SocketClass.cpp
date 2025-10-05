@@ -47,13 +47,19 @@ bool CSocket::ReadMsg(void) {
 	if (iNum > 0 && iNum < RX_BUFF_SIZE) {
 		m_uRxMsgIdx += iNum;
 		std::cout << "Socket read " << iNum << " bytes." << std::endl;
-		std::cout << m_aRxBuff << std::endl;
+		std::cout << "Content:" << m_aRxBuff << std::endl;
 	} else {
 		std::cout << "Error reading data from socket or receive buffer is full!" << std::endl;
 		bRet = false;
 	}
 
 	return bRet;
+}
+
+const uint8_t CSocket::GetBuff( uint8_t*& pBuff ) {
+	pBuff = m_aRxBuff;
+
+	return m_uRxMsgIdx;
 }
 
 CSocket::~CSocket()

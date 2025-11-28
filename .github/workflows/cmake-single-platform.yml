@@ -35,14 +35,7 @@ jobs:
         target: 'desktop'
         arch: 'gcc_64' # Or appropriate architecture for your host/target
         install-deps: 'true' # Install necessary build dependencies
-        cache: 'true' # Enable caching for faster runs
-
-    - name: Build Boost
-      id: boost
-      uses: egor-tensin/build-boost@v1
-      with:
-        version: 1.83.0 # Specify your desired Boost version
-        libraries: filesystem program_options # Specify required libraries
+        cache: 'true' # Enable caching for faster run
 
 
     #- name: Configure CMake

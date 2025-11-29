@@ -48,17 +48,18 @@ jobs:
          sudo apt-get update
          sudo apt-get install libboost-all-dev # Or specific Boost components like libboost-program-options-dev
 
+    #- name: Update apt
+    #  run: sudo apt-get update
+
+    - name: Install libclang-9-dev
+      run: |
+         sudo apt-get install -y libclang-9-dev
+
     - name: Install Doxygen
       uses: ssciwr/doxygen-install@v1
       with:
          version: "1.9.1" # Specify desired Doxygen version
     
-    - name: Update apt
-      run: sudo apt-get update
-
-    - name: Install libclang-10-dev
-      run: |
-         sudo apt-get install -y libclang-10-dev
     #- name: Install libclang-dev
     #  run: |
     #     sudo apt-get update

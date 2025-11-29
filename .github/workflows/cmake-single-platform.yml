@@ -56,9 +56,9 @@ jobs:
     - name: Update apt
       run: sudo apt-get update
 
-    - name: Install libclang-9-dev
+    - name: Install libclang-10-dev
       run: |
-         sudo apt-get install -y libclang-9-dev
+         sudo apt-get install -y libclang-10-dev
     #- name: Install libclang-dev
     #  run: |
     #     sudo apt-get update

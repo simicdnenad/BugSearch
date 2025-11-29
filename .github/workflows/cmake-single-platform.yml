@@ -38,7 +38,7 @@ jobs:
         cache: 'true' # Enable caching for faster run
 
     - name: Install Boost
-      uses: MarkusJx/install-boost@v1 # Use the latest version
+      uses: MarkusJx/install-boost@v2.0.0 # Use the latest version
       with:
         boost_version: '1.65.1' # Specify your desired Boost version
         toolset: 'gcc' # Or msvc, clang, etc.

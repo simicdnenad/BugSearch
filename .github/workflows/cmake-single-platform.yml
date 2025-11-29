@@ -37,6 +37,12 @@ jobs:
         install-deps: 'true' # Install necessary build dependencies
         cache: 'true' # Enable caching for faster run
 
+    - name: Install Boost
+      uses: MarkusJx/install-boost@v1 # Use the latest version
+      with:
+        boost_version: '1.65.1' # Specify your desired Boost version
+        toolset: 'gcc' # Or msvc, clang, etc.
+        # Other optional parameters like platform_version, link, arch, etc.
 
     #- name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

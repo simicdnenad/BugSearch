@@ -54,7 +54,9 @@ jobs:
          version: "1.9.1" # Specify desired Doxygen version
 
     - name: Install libclang
-      run: sudo apt-get update && sudo apt-get install -y libclang-9-dev
+      run: |
+         sudo apt-get update
+         sudo apt-get install -y libclang-9-dev
 
     #- name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.

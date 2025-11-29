@@ -117,7 +117,7 @@ then
   printf "\n"
   run_unit_tests
   printf "\n"
-  create_doxygen_docu
+  #create_doxygen_docu
 elif [[ "$1" == "clean" ]];
 then
   printf "Cleaning build dir \n"

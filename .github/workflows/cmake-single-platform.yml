@@ -53,6 +53,10 @@ jobs:
       with:
          version: "1.9.1" # Specify desired Doxygen version
 
+    - name: Install libclang-9-dev
+      run: |
+         sudo apt-get update
+         sudo apt-get install -y libclang-9-dev
     #- name: Install libclang-dev
     #  run: |
     #     sudo apt-get update

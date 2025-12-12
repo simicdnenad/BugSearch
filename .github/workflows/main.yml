@@ -1,0 +1,49 @@
+name: BugSearch Workflow
+
+on:
+  push:
+    branches: [ "master" ]
+# on:
+#  pull_request:
+#    branches:
+#      - main # Or your target branch
+# on: workflow_dispatch
+
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.5.0' # Specify your desired Qt version
+        host: 'linux' # Or 'windows', 'mac'
+        target: 'desktop'
+        arch: 'gcc_64' # Or appropriate architecture for your host/target
+        install-deps: 'true' # Install necessary build dependencies
+        cache: 'true' # Enable caching for faster run
+
+    - name: Install Boost
+      run: |
+         sudo apt-get update
+         sudo apt-get install libboost-all-dev # Or specific Boost components like libboost-program-options-dev
+
+    - name: Install libclang-dev
+      run: |
+         sudo apt-get install -y libclang-dev
+
+    - name: Install Doxygen
+      uses: ssciwr/doxygen-install@v1
+      with:
+         version: "1.9.1" # Specify desired Doxygen version
+
+    - name: Execute Build script
+      run: ${{github.workspace}}/manual_test/linux_test.sh

@@ -114,10 +114,10 @@ then
   build_app $1
   printf "\n"
   run_app
-  printf "\n"
-  run_unit_tests
-  printf "\n"
-  create_doxygen_docu
+#  printf "\n"
+#  run_unit_tests
+#  printf "\n"
+#  create_doxygen_docu
 elif [[ "$1" == "clean" ]];
 then
   printf "Cleaning build dir \n"

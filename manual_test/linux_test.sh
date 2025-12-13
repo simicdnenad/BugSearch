@@ -86,8 +86,8 @@ function run_unit_tests()
   echo "Running Unit Tests."
   $TEST
   echo "Creating Code Coverage Report."
-  lcov -c -d ${BUILD_DIR}/tst/CMakeFiles/BugSearch_tst.dir/ -o main_coverage.info
-  genhtml main_coverage.info --output-directory ${BUGSEARCH_BASE}/out
+  lcov --ignore-errors mismatch -c -d ${BUILD_DIR}/tst/CMakeFiles/BugSearch_tst.dir/ -o main_coverage.info
+  genhtml  main_coverage.info --output-directory ${BUGSEARCH_BASE}/out
 }
 
 function create_doxygen_docu()
@@ -107,17 +107,20 @@ then
   printf "\n"
   clone_gtest_submodule
   printf "\n"
-  build_gui
-  printf "\n"
-  run_GUI $1
-  printf "\n"
+  if [ "$1" == "IPC" ];
+  then
+    build_gui
+    printf "\n"
+    run_GUI $1
+    printf "\n"
+  fi
   build_app $1
   printf "\n"
   run_app
-#  printf "\n"
-#  run_unit_tests
-#  printf "\n"
-#  create_doxygen_docu
+  printf "\n"
+  run_unit_tests
+  printf "\n"
+  create_doxygen_docu
 elif [[ "$1" == "clean" ]];
 then
   printf "Cleaning build dir \n"

@@ -1,12 +1,13 @@
 name: BugSearch Workflow
 
-on:
-  push:
-    branches: [ "master" ]
 # on:
-#  pull_request:
-#    branches:
-#      - main # Or your target branch
+#  push:
+#    branches: [ "master" ]
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - master
 # on: workflow_dispatch
 
 

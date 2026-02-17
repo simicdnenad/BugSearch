@@ -111,6 +111,16 @@ int main()
 
 	std::string sPaths((char*)pPaths, uSize);
 	cout << "Received file paths: " << sPaths << endl;
+
+	string strPath;
+	unsigned found_at = 0, start_from = 0;
+	while ( (found_at = sPaths.find(".", start_from )) != NOT_FOUND && start_from <= uSize ){
+		strPath = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
+		start_from = found_at + 1 + FILE_EXT_SIZE;
+		cout << "found_at =" << found_at << endl;
+		cout << strPath << endl;
+	}
+
 	// TODO: forward paths to data processing methods.
 
 	return retVal;

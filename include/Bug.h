@@ -42,6 +42,7 @@ namespace po = boost::program_options;
 #else
 #define LINES_PER_THREAD		1000000			// MAX_NUMOF_LINES
 #endif
+#define FILE_EXT_SIZE			3			// .txt or .nfo extensions size
 
 namespace landscape {
 

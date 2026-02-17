@@ -56,6 +56,9 @@ function build_app()
   fi
   echo "Building project"
   make -f Makefile
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
 }
 
 function build_gui()
@@ -87,7 +90,7 @@ function run_unit_tests()
   $TEST
   echo "Creating Code Coverage Report."
   lcov --ignore-errors mismatch -c -d ${BUILD_DIR}/tst/CMakeFiles/BugSearch_tst.dir/ -o main_coverage.info
-  genhtml  main_coverage.info --output-directory ${BUGSEARCH_BASE}/out
+  genhtml main_coverage.info --output-directory ${BUGSEARCH_BASE}/out
 }
 
 function create_doxygen_docu()

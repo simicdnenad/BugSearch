@@ -109,17 +109,23 @@ int main()
 	uint8_t* pPaths = 0;
 	uint8_t uSize = socketWaitClient.GetBuff(pPaths);
 
-	std::string sPaths((char*)pPaths, uSize);
-	cout << "Received file paths: " << sPaths << endl;
+	string sPaths((char*)pPaths, uSize);
 
-	string strPath;
-	unsigned found_at = 0, start_from = 0;
+	string strLandscape, strBug;
+	unsigned found_at = 0, start_from = 0, uIt = 0;
 	while ( (found_at = sPaths.find(".", start_from )) != NOT_FOUND && start_from <= uSize ){
-		strPath = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
-		start_from = found_at + 1 + FILE_EXT_SIZE;
-		cout << "found_at =" << found_at << endl;
-		cout << strPath << endl;
+		if (0 == uIt) {
+			strLandscape = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
+			start_from = found_at + 1 + FILE_EXT_SIZE;
+			uIt++;
+		} else {
+			strBug = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
+			break;
+		}
 	}
+
+	cout << "Landscape file:" << strLandscape << endl;
+	cout << "Bug file:" << strBug << endl;
 
 	// TODO: forward paths to data processing methods.
 

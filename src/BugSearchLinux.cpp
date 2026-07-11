@@ -8,12 +8,119 @@ typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
 
 #ifdef IPC
 #include "SocketClass.h"
-#endif
-
 /**
  * @brief loads from files Bug (pattern to be searched for) and Landscape (bigger file through which is searched) inside of program structures
  *
- * loads landscape and bug text files in container<string> data structures to provide searching. In case when multithreading preprocessor const is enabled
+ * loads landscape and bug text files in container<string> data structures to provides searching. In case when multithreading preprocessor constant is enabled
+ * data is processed between multiple threads in parallel, and number of found Bugs is updated.
+ *
+ * @param rsBugFile			reference to string that consist path of Bug file
+ * @param rsLandscapeFile	reference to string that consist path of Landscape file
+ * @return int (-1 is false, >=0 is true)
+ */
+int processData(string& rsBugFile, string& rsLandscapeFile) {
+	unsigned int NumOfLines = 0;
+#ifndef MULTI_THREAD
+	CBug<string, CONTAINER<string>::iterator, CONTAINER> bubica(rsBugFile);
+
+	if (bubica.OnInit(rsBugFile, rsLandscapeFile) == CBug<string, CONTAINER<string>::iterator, CONTAINER>::EFileOpenErrors::ALL_SUCCESSFULL) {
+		cout << "Input files are correctly opened and loaded in memory." << '\n';
+	}
+	else
+		cout << "Input files are not correctly opened!!!" << '\n';
+
+	cout << "Number of lines:" << (NumOfLines = CBug<string, CONTAINER<string>::iterator, CONTAINER>::GetNumOfLines()) << '\n';
+	bubica.NumOfBugs();
+	cout << "Number of found bugs:" << (NumOfLines = bubica.GetNumOfBugs()) << '\n';
+#else
+	CBugT::EFileOpenErrors eFileOpen;
+	vector<string> vBugFilesPaths = { rsBugFile };
+	vector<string>::iterator iBugFilesPaths = vBugFilesPaths.begin();
+	if ((eFileOpen = CBugT::OnInit(iBugFilesPaths, rsLandscapeFile)) != CBugT::EFileOpenErrors::ALL_SUCCESSFULL) {
+		cout << CBugT::mapFileErrors.at(eFileOpen);
+		if (eFileOpen == CBugT::EFileOpenErrors::LANDSCAPE_FAIL) {
+			cout << rsLandscapeFile << endl;
+		}
+		else if (eFileOpen == CBugT::EFileOpenErrors::BUG_FAIL)
+			cout << rsBugFile << endl;
+		else
+			cout << endl;
+		return -1;
+	}
+
+	cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
+
+	vector<std::thread> vThreads;
+	vector<unique_ptr<CBugT>> vupBugs;
+	for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++) {
+		vupBugs.push_back((unique_ptr<CBugT>)(new CBugT(rsBugFile)));
+		vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
+	}
+
+	auto iupBugs = vupBugs.begin();
+	for (std::thread& rThread : vThreads) {
+		if (rThread.joinable())
+			rThread.join();
+		cout << "Number of Bugs (tid=" << ((*iupBugs).get())->GetThreadId() << ")=" << ((*iupBugs).get())->GetNumOfBugs() << "\n";
+		iupBugs++;
+	}
+	vThreads.erase(vThreads.begin(), vThreads.end());
+	vupBugs.erase(vupBugs.begin(), iupBugs);
+	cout << "Total number of Bugs: " << CBugT::GetTotNumOfBugs() << "\n";
+#endif
+	return 0;
+}
+/**
+ * @brief loads Bug and Landscape files paths
+ *
+ * loads landscape and bug text files paths from GUI application via IPC.
+ * Number of bug patterns found in landscape file is calculated.
+ *
+ * @return int (!=0 is false, ==0 is true)
+ */
+int main()
+{
+	int retVal = 0;
+
+	CSocket socketWaitClient;
+	socketWaitClient.initSocket();
+	std::cout << "Waiting IPC command for program start!" << endl;
+	if (socketWaitClient.listenSocket() == false) {
+		retVal = 1;
+		return retVal;
+	}
+	socketWaitClient.ReadMsg();
+	uint8_t* pPaths = 0;
+	uint8_t uSize = socketWaitClient.GetBuff(pPaths);
+
+	string sPaths((char*)pPaths, uSize);
+
+	string strLandscape, strBug;
+	unsigned found_at = 0, start_from = 0, uIt = 0;
+	while ( (found_at = sPaths.find(".", start_from )) != NOT_FOUND && start_from <= uSize ){
+		if (0 == uIt) {
+			strLandscape = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
+			start_from = found_at + 1 + FILE_EXT_SIZE;
+			uIt++;
+		} else {
+			strBug = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
+			break;
+		}
+	}
+
+	cout << "Landscape file:" << strLandscape << endl;
+	cout << "Bug file:" << strBug << endl;
+
+	processData(strBug, strLandscape);
+
+	return retVal;
+}
+
+#else
+/**
+ * @brief loads from files Bug (pattern to be searched for) and Landscape (bigger file through which is searched) inside of program structures
+ *
+ * loads landscape and bug text files in container<string> data structures to provide searching. In case when multithreading preprocessor constant is enabled
  * data is processed between multiple threads in parallel, and number of found Bugs is updated.
  *
  * @param vm			program arguments stored in variables_map structure. Represent names of files which are storing data to be processed.
@@ -84,49 +191,6 @@ int processData(po::variables_map& vm, vector<string>& vBugFilesPaths) {
 #endif
 	return 0;
 }
-
-#ifdef IPC
-/**
- * @brief loads Bug and Landscape files paths
- *
- * loads landscape and bug text files paths from GUI application via IPC.
- * Number of bug patterns found in landscape file is calculated.
- *
- * @return int (!=0 is false, ==0 is true)
- */
-int main()
-{
-	int retVal = 0;
-
-	CSocket socketWaitClient;
-	socketWaitClient.initSocket();
-	std::cout << "Waiting IPC command for program start!" << endl;
-	if (socketWaitClient.listenSocket() == false) {
-		retVal = 1;
-		return retVal;
-	}
-	socketWaitClient.ReadMsg();
-	uint8_t* pPaths = 0;
-	uint8_t uSize = socketWaitClient.GetBuff(pPaths);
-
-	std::string sPaths((char*)pPaths, uSize);
-	cout << "Received file paths: " << sPaths << endl;
-
-	string strPath;
-	unsigned found_at = 0, start_from = 0;
-	while ( (found_at = sPaths.find(".", start_from )) != NOT_FOUND && start_from <= uSize ){
-		strPath = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
-		start_from = found_at + 1 + FILE_EXT_SIZE;
-		cout << "found_at =" << found_at << endl;
-		cout << strPath << endl;
-	}
-
-	// TODO: forward paths to data processing methods.
-
-	return retVal;
-}
-
-#else
 /**
  * @brief loads Bug and Landscape files paths
  *

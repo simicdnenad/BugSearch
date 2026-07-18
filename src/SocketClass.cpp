@@ -56,6 +56,43 @@ bool CSocket::ReadMsg(void) {
 	return bRet;
 }
 
+bool CSocket::setTxData(const uint8_t *pTxBuff, uint8_t uTxMsgLen) {
+    bool bRet = true;
+    if (TX_BUFF_SIZE < m_uTxMsgIdx + uTxMsgLen) {
+        bRet = false;
+    } else {
+        memcpy(m_aTxBuff + m_uTxMsgIdx, pTxBuff, uTxMsgLen);
+        m_uTxMsgIdx += uTxMsgLen;
+    }
+
+    return bRet;
+}
+
+bool CSocket::setTxDataInt(const int iData) {
+    bool bRet = true;
+    const uint8_t *pData = reinterpret_cast<const uint8_t*>(&iData);
+    if (TX_BUFF_SIZE < m_uTxMsgIdx + sizeof(int)) {
+        bRet = false;
+    } else {
+        memcpy(m_aTxBuff + m_uTxMsgIdx, pData, sizeof(int));
+        m_uTxMsgIdx += sizeof(int);
+    }
+
+    return bRet;
+}
+
+bool CSocket::SendMsg(void) {
+    bool bRet = true;
+
+    int n = write(m_NewSockFd, m_aTxBuff, m_uTxMsgIdx);
+    if (n < m_uTxMsgIdx) {
+        std::cout << "ERROR sending data to Bug app!" << std::endl;
+        bRet = false;
+    }
+
+    return bRet;
+}
+
 const uint8_t CSocket::GetBuff( uint8_t*& pBuff ) {
 	pBuff = m_aRxBuff;
 

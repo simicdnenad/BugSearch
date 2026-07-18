@@ -16,10 +16,11 @@ typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
  *
  * @param rsBugFile			reference to string that consist path of Bug file
  * @param rsLandscapeFile	reference to string that consist path of Landscape file
- * @return int (-1 is false, >=0 is true)
+ * @return int (-1 is false, >=0 numbers of Bug patterns found)
  */
 int processData(string& rsBugFile, string& rsLandscapeFile) {
 	unsigned int NumOfLines = 0;
+	int retVal = -1;
 #ifndef MULTI_THREAD
 	CBug<string, CONTAINER<string>::iterator, CONTAINER> bubica(rsBugFile);
 
@@ -45,30 +46,29 @@ int processData(string& rsBugFile, string& rsLandscapeFile) {
 			cout << rsBugFile << endl;
 		else
 			cout << endl;
-		return -1;
-	}
+	} else {
+		cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
 
-	cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
+		vector<std::thread> vThreads;
+		vector<unique_ptr<CBugT>> vupBugs;
+		for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++) {
+			vupBugs.push_back((unique_ptr<CBugT>)(new CBugT(rsBugFile)));
+			vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
+		}
 
-	vector<std::thread> vThreads;
-	vector<unique_ptr<CBugT>> vupBugs;
-	for (unsigned int i = 0; i < NumOfLines / LINES_PER_THREAD + 1; i++) {
-		vupBugs.push_back((unique_ptr<CBugT>)(new CBugT(rsBugFile)));
-		vThreads.push_back(std::thread(std::ref(*(vupBugs.back().get())), i*LINES_PER_THREAD));				// must use std::ref() to avoid object copying to created thread
+		auto iupBugs = vupBugs.begin();
+		for (std::thread& rThread : vThreads) {
+			if (rThread.joinable())
+				rThread.join();
+			cout << "Number of Bugs (tid=" << ((*iupBugs).get())->GetThreadId() << ")=" << ((*iupBugs).get())->GetNumOfBugs() << "\n";
+			iupBugs++;
+		}
+		vThreads.erase(vThreads.begin(), vThreads.end());
+		vupBugs.erase(vupBugs.begin(), iupBugs);
+		cout << "Total number of Bugs: " << (retVal = CBugT::GetTotNumOfBugs()) << "\n";
 	}
-
-	auto iupBugs = vupBugs.begin();
-	for (std::thread& rThread : vThreads) {
-		if (rThread.joinable())
-			rThread.join();
-		cout << "Number of Bugs (tid=" << ((*iupBugs).get())->GetThreadId() << ")=" << ((*iupBugs).get())->GetNumOfBugs() << "\n";
-		iupBugs++;
-	}
-	vThreads.erase(vThreads.begin(), vThreads.end());
-	vupBugs.erase(vupBugs.begin(), iupBugs);
-	cout << "Total number of Bugs: " << CBugT::GetTotNumOfBugs() << "\n";
 #endif
-	return 0;
+	return retVal;
 }
 /**
  * @brief loads Bug and Landscape files paths
@@ -92,10 +92,9 @@ int main()
 	socketWaitClient.ReadMsg();
 	uint8_t* pPaths = 0;
 	uint8_t uSize = socketWaitClient.GetBuff(pPaths);
+	string sPaths((char*)pPaths, uSize), strLandscape, strBug;
+	int iBugsFound = 0;
 
-	string sPaths((char*)pPaths, uSize);
-
-	string strLandscape, strBug;
 	unsigned found_at = 0, start_from = 0, uIt = 0;
 	while ( (found_at = sPaths.find(".", start_from )) != NOT_FOUND && start_from <= uSize ){
 		if (0 == uIt) {
@@ -111,7 +110,9 @@ int main()
 	cout << "Landscape file:" << strLandscape << endl;
 	cout << "Bug file:" << strBug << endl;
 
-	processData(strBug, strLandscape);
+	iBugsFound = processData(strBug, strLandscape);
+	socketWaitClient.setTxDataInt(iBugsFound);
+	socketWaitClient.SendMsg();
 
 	return retVal;
 }

@@ -34,6 +34,7 @@ private:
     void createActions();
     void showBugFileContent(QString& strFileName);
     void showLandscapeFileContent(QString& strFileName);
+    bool receiveProcessingResults();
 signals:
 
 public slots:

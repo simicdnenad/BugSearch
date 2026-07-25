@@ -31,6 +31,7 @@ public:
     bool setTxData(const uint8_t *pTxBuff, uint8_t uTxMsgLen);
     bool SendMsg(void);
     bool ReceiveMsg(void);
+    unsigned getNumberOfBugs();
     ~CSocketClient();
 };
 

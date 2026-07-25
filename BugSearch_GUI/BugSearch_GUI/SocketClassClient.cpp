@@ -21,6 +21,12 @@ bool CSocketClient::initSocket(){
          m_ServerName->h_length);
     m_ServAddr.sin_port = htons(PORT);
 
+    // set time-out interval
+    struct timeval tv;
+    tv.tv_sec = 10;
+    tv.tv_usec = 0;
+    setsockopt(m_SockFd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
+
     if (connect(m_SockFd,(struct sockaddr *) &m_ServAddr,sizeof(m_ServAddr)) < 0) {
         std::cout << "ERROR connecting" << std::endl;
         return false;
@@ -51,6 +57,19 @@ bool CSocketClient::ReceiveMsg(void) {
     }
 
     return bRet;
+}
+
+unsigned CSocketClient::getNumberOfBugs() {
+    unsigned uNOfBugs = 0;
+
+    if (m_uRxMsgIdx >= sizeof(unsigned)) {
+        uNOfBugs = *((unsigned*)&m_aRxBuff[m_uRxMsgIdx - sizeof(unsigned)]);
+        m_uRxMsgIdx = m_uRxMsgIdx - sizeof(unsigned);
+    } else {
+        std::cout << "Number of Bug patterns found not received!" << std::endl;
+    }
+
+    return uNOfBugs;
 }
 
 bool CSocketClient::setTxData(const uint8_t *pTxBuff, uint8_t uTxMsgLen) {

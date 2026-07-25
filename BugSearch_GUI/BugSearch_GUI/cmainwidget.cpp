@@ -57,10 +57,11 @@ void CMainWidget::onProcessButtonReleased() {
         {
             if (!(p_textLandscapePath->toPlainText().isEmpty()) && !(p_textBugPath->toPlainText().isEmpty())) {
                 e_connState = EConnState::NOT_CONNECTED;
+                onProcessButtonReleased();
             } else {
                 statusBar()->showMessage("Landscape or Bug files not selected. Please select both of them!");
-                break;
             }
+            break;
         }
         case EConnState::NOT_CONNECTED:
         {
@@ -80,9 +81,18 @@ void CMainWidget::onProcessButtonReleased() {
         {
             if (true == forwardFileNames()) {
                 e_connState = EConnState::PROCESSING;
+                p_ProgressBar->setValue(30);
+                if (true == receiveProcessingResults()) {
+                    e_connState = EConnState::FINISHED;
+                    p_ProgressBar->setValue(100);
+                } else {
+                    e_connState = EConnState::UNKNOWN_FAILURE;
+                    p_ProgressBar->setValue(0);
+                }
             } else {
                 statusBar()->showMessage("Problem in communication with BugSeach app!");
                 e_connState = EConnState::UNKNOWN_FAILURE;
+                p_ProgressBar->setValue(0);
             }
             break;
         }
@@ -161,6 +171,22 @@ bool CMainWidget::forwardFileNames() {
     } else {
         statusBar()->showMessage("Landscape and Bug file paths are too long.");
         bRet = false;
+    }
+
+    return bRet;
+}
+
+bool CMainWidget::receiveProcessingResults() {
+    bool bRet = false;
+
+    if ((bRet = m_socketClient.ReceiveMsg()) == true) {
+        QString result;
+        QTextStream stream(&result);
+        stream << "Number of Bug patterns found: " << m_socketClient.getNumberOfBugs();
+        statusBar()->showMessage(result);
+        bRet = true;
+    } else {
+        statusBar()->showMessage("No processing result received!");
     }
 
     return bRet;

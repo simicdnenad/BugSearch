@@ -8,7 +8,14 @@ bool CSocketClient::initSocket(){
         return false;
     }
 
-    m_ServerName = gethostbyname("nenad-Lenovo");
+    char hostname[256];
+
+    if (gethostname(hostname, sizeof(hostname)) == -1) {
+        perror("gethostname failed");
+        return false;
+    }
+
+    m_ServerName = gethostbyname(hostname);
     if (NULL == m_ServerName) {
         std::cout << "ERROR, no such host" << std::endl;
         return false;
@@ -87,5 +94,6 @@ bool CSocketClient::setTxData(const uint8_t *pTxBuff, uint8_t uTxMsgLen) {
 
 CSocketClient::~CSocketClient()
 {
+    std::cout << "Closing opened socket." << std::endl;
     close(m_SockFd);
 }

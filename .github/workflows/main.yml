@@ -62,4 +62,4 @@ jobs:
 #        update-comment: true
 
     - name: Execute Build script
-      run: ${{github.workspace}}/manual_test/linux_test.sh
+      run: ${{github.workspace}}/src/linux_build.sh

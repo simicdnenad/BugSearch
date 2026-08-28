@@ -5,6 +5,17 @@ Small application which is searching throught "/manual_test/landscape.nfo" file 
 ## Files
 ```
 .
+├── BugSearch_GUI
+│   └── BugSearch_GUI
+│       ├── BugSearch_GUI.pro
+│       ├── cmainwidget.cpp
+│       ├── cmainwidget.h
+│       ├── connstates.h
+│       ├── main.cpp
+│       ├── res
+│       │   └── logo.png
+│       ├── SocketClassClient.cpp
+│       └── SocketClassClient.h
 ├── CMakeLists.txt
 ├── include
 │   ├── Bug.h
@@ -12,26 +23,19 @@ Small application which is searching throught "/manual_test/landscape.nfo" file 
 │   └── SocketClass.h
 ├── lib
 │   └── googletest
-├── manual_test
-│   ├── bug.nfo
-│   ├── landscape.nfo
-│   ├── linux_test.sh
-│   ├── spiderman_2.nfo
-│   └── spiderman.nfo
-├── BugSearch_GUI
-│   ├── main.cpp
-│   ├── mainwidget.cpp
-│   ├── mainwidget.h
-│   ├── BugSearch_GUI.pro
-│   ├── SocketClassClient.cpp
-│   └── SocketClassClient.h
 ├── README.md
 ├── src
 │   ├── Bug.cpp
 │   ├── BugSearchLinux.cpp
 │   ├── BugSearchWin.cpp
 │   ├── CMakeLists.txt
+│   ├── linux_build.sh
 │   └── SocketClass.cpp
+├── test_patterns
+│   ├── bug.nfo
+│   ├── landscape.nfo
+│   ├── spiderman_2.nfo
+│   └── spiderman.nfo
 ├── tst
 │   ├── CMakeLists.txt
 │   ├── main.cpp

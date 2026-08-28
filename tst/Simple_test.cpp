@@ -21,25 +21,25 @@ TEST_F( CBugTest, TestFileInput )
 	EXPECT_TRUE( !(up_BugTest->GetBugName().compare("TestBug1")) );
 
 	vector<string> vBugTestFilesPaths;
-	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/bug.nfo" );
-	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/bug1.nfo" );
-	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/bug2.nfo" );
+	vBugTestFilesPaths.push_back( "../BugSearch/test_patterns/bug.nfo" );
+	vBugTestFilesPaths.push_back( "../BugSearch/test_patterns/bug1.nfo" );
+	vBugTestFilesPaths.push_back( "../BugSearch/test_patterns/bug2.nfo" );
 	auto iBugTestFilesPaths = vBugTestFilesPaths.begin();
 
-	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
-	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape1.nfo") , CBugT::EFileOpenErrors::LANDSCAPE_FAIL );
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/test_patterns/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/test_patterns/landscape1.nfo") , CBugT::EFileOpenErrors::LANDSCAPE_FAIL );
 	iBugTestFilesPaths++;
-	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::BUG_FAIL );
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/test_patterns/landscape.nfo") , CBugT::EFileOpenErrors::BUG_FAIL );
 	iBugTestFilesPaths++;
-	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::BUG_FAIL );
+	EXPECT_EQ( up_BugTest->OnInit(iBugTestFilesPaths,"../BugSearch/test_patterns/landscape.nfo") , CBugT::EFileOpenErrors::BUG_FAIL );
 
 }
 
 TEST( BugTest, TestNumOfBugs )
 {
 	vector<string> vBugTestFilesPaths;
-	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/spiderman_2.nfo" );
-	vBugTestFilesPaths.push_back( "../BugSearch/manual_test/spiderman.nfo" );
+	vBugTestFilesPaths.push_back( "../BugSearch/test_patterns/spiderman_2.nfo" );
+	vBugTestFilesPaths.push_back( "../BugSearch/test_patterns/spiderman.nfo" );
 	auto iBugTestFilesPaths = vBugTestFilesPaths.begin();
 
 	while ( iBugTestFilesPaths != vBugTestFilesPaths.end() )
@@ -47,7 +47,7 @@ TEST( BugTest, TestNumOfBugs )
 		string sFileName = (*iBugTestFilesPaths).substr((*iBugTestFilesPaths).rfind(DIR_SEPARATOR) + 1,
 						   (*iBugTestFilesPaths).rfind('.') - (*iBugTestFilesPaths).rfind(DIR_SEPARATOR) - 1);
 		CBugT Bug(sFileName);
-		ASSERT_EQ( Bug.OnInit(iBugTestFilesPaths,"../BugSearch/manual_test/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
+		ASSERT_EQ( Bug.OnInit(iBugTestFilesPaths,"../BugSearch/test_patterns/landscape.nfo") , CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
 		Bug.NumOfBugs( 0 );
 
 		if ( sFileName.compare("spiderman_2") == 0  )

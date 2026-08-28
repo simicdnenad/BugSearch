@@ -81,7 +81,7 @@ function run_GUI()
 function run_app()
 {
   echo "Running app."
-  $TARGET --bug_file ${BUGSEARCH_BASE}/manual_test/bug.nfo --landscape_file ${BUGSEARCH_BASE}/manual_test/landscape.nfo
+  $TARGET --bug_file ${BUGSEARCH_BASE}/test_patterns/bug.nfo --landscape_file ${BUGSEARCH_BASE}/test_patterns/landscape.nfo
 }
 
 function run_unit_tests()

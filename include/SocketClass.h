@@ -31,6 +31,8 @@ public:
     bool setTxDataInt(const int iData);
     bool SendMsg(void);
     const uint8_t GetBuff( uint8_t*& pBuff );
+    void resetTxData();
+    void resetRxData();
 
     ~CSocket();
 };

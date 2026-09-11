@@ -99,6 +99,16 @@ const uint8_t CSocket::GetBuff( uint8_t*& pBuff ) {
 	return m_uRxMsgIdx;
 }
 
+void CSocket::resetTxData() {
+    memset(m_aTxBuff, 0, TX_BUFF_SIZE);
+    m_uTxMsgIdx = 0;
+}
+
+void CSocket::resetRxData() {
+    memset(m_aRxBuff, 0, RX_BUFF_SIZE);
+    m_uRxMsgIdx = 0;
+}
+
 CSocket::~CSocket()
 {
 	std::cout << "Closing opened sockets." << std::endl;

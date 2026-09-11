@@ -32,6 +32,8 @@ public:
     bool SendMsg(void);
     bool ReceiveMsg(void);
     unsigned getNumberOfBugs();
+    void resetTxData();
+    void resetRxData();
     ~CSocketClient();
 };
 

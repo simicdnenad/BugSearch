@@ -83,37 +83,42 @@ int main()
 	int retVal = 0;
 
 	CSocket socketWaitClient;
-	socketWaitClient.initSocket();
-	std::cout << "Waiting IPC command for program start!" << endl;
-	if (socketWaitClient.listenSocket() == false) {
-		retVal = 1;
-		return retVal;
-	}
-	socketWaitClient.ReadMsg();
-	uint8_t* pPaths = 0;
-	uint8_t uSize = socketWaitClient.GetBuff(pPaths);
-	string sPaths((char*)pPaths, uSize), strLandscape, strBug;
-	int iBugsFound = 0;
+	if (socketWaitClient.initSocket() == false) {
+		retVal = -1;
+	} else if (socketWaitClient.listenSocket() == false) {
+		retVal = -1;
+	} else {
+		while (true) {
+			std::cout << "Waiting for Landscape and Bug file paths..." << endl;
 
-	unsigned found_at = 0, start_from = 0, uIt = 0;
-	while ( (found_at = sPaths.find(".", start_from )) != NOT_FOUND && start_from <= uSize ){
-		if (0 == uIt) {
-			strLandscape = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
-			start_from = found_at + 1 + FILE_EXT_SIZE;
-			uIt++;
-		} else {
-			strBug = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
-			break;
+			socketWaitClient.ReadMsg();
+			uint8_t* pPaths = 0;
+			uint8_t uSize = socketWaitClient.GetBuff(pPaths);
+			string sPaths((char*)pPaths, uSize), strLandscape, strBug;
+			int iBugsFound = 0;
+
+			unsigned found_at = 0, start_from = 0, uIt = 0;
+			while ( (found_at = sPaths.find(".", start_from )) != NOT_FOUND && start_from <= uSize ){
+				if (0 == uIt) {
+					strLandscape = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
+					start_from = found_at + 1 + FILE_EXT_SIZE;
+					uIt++;
+				} else {
+					strBug = sPaths.substr( start_from, found_at - start_from + 1 + FILE_EXT_SIZE );
+					break;
+				}
+			}
+
+			cout << "Landscape file:" << strLandscape << endl;
+			cout << "Bug file:" << strBug << endl;
+
+			iBugsFound = processData(strBug, strLandscape);
+			socketWaitClient.setTxDataInt(iBugsFound);
+			socketWaitClient.SendMsg();
+			socketWaitClient.resetTxData();
+			socketWaitClient.resetRxData();
 		}
 	}
-
-	cout << "Landscape file:" << strLandscape << endl;
-	cout << "Bug file:" << strBug << endl;
-
-	iBugsFound = processData(strBug, strLandscape);
-	socketWaitClient.setTxDataInt(iBugsFound);
-	socketWaitClient.SendMsg();
-
 	return retVal;
 }
 

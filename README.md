@@ -1,6 +1,6 @@
 # BugSearch
 
-Small application which is searching throught "/manual_test/landscape.nfo" file for a multiline string pattern from "/manual_test/bug.nfo" file.
+Small application which is searching throught "/test_patterns/landscape.nfo" file for a multiline string pattern from "/test_patterns/bug.nfo" file.
 
 ## Files
 ```
@@ -66,11 +66,11 @@ Clone repo with:
 ### Under Linux:
 1. Run script (contained in cloned repo):  
 ```
-    BugSearch/manual_test/linux_test.sh;
+    BugSearch/src/linux_build.sh;
 ```
 1.1 If you want to use GUI Client for file selection run:
 ```
-    BugSearch/manual_test/linux_test.sh IPC;
+    BugSearch/src/linux_build.sh IPC;
 ```
 
 ### Under Windows: 
@@ -85,19 +85,19 @@ Clone repo with:
 #### Under Eclipse IDE
 1. Go to "File->Import" and select "General->Existing Project into Workspace". Then select the directory of generated Eclipse project file (BugSearch/../build),  
 2. To be able to test the application, go to "Binaries->BinaryName" and select "Properties". Add new "Run/Debug Settings" add insert input arguments:  
---bug_file ../BugSearch/manual_test/bug.nfo  
---landscape_file ../BugSearch/manual_test/landscape.nfo  
+--bug_file ../BugSearch/test_patterns/bug.nfo  
+--landscape_file ../BugSearch/test_patterns/landscape.nfo  
 #### From command line
 1. Run script (contained in cloned repo):  
 ```
-    BugSearch/manual_test/linux_test.sh;
+    BugSearch/src/linux_build.sh;
 ```
 
 ### Under Windows:
 #### Under VS2017 IDE:
 1. Under "Project Properties->Debugging->Command Arguments add (apsolute paths):
-(e.g) --bug_file "C:\\Users\\Nenad\\Desktop\\Bugce\\BugSearch\\manual_test\\bug.nfo"
-      --landscape_file "C:\\Users\\Nenad\\Desktop\\Bugce\\BugSearch\\manual_test\\landscape.nfo"  
+(e.g) --bug_file "C:\\Users\\Nenad\\Desktop\\Bugce\\BugSearch\\test_patterns\\bug.nfo"
+      --landscape_file "C:\\Users\\Nenad\\Desktop\\Bugce\\BugSearch\\test_patterns\\landscape.nfo"  
 2. In same panel edit "WorkingDirectory"=$(ProjectDir)\Debug;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------

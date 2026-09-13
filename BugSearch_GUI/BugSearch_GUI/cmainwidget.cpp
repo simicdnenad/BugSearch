@@ -78,6 +78,7 @@ void CMainWidget::onProcessButtonReleased() {
             break;
         }
         case EConnState::CONNECTED:
+        case EConnState::FINISHED:
         {
             if (true == forwardFileNames()) {
                 e_connState = EConnState::PROCESSING;
@@ -164,6 +165,7 @@ bool CMainWidget::forwardFileNames() {
         m_socketClient.setTxData(reinterpret_cast<const uint8_t*>(p_textBugPath->toPlainText().toStdString().c_str()),
                                  strlen(p_textBugPath->toPlainText().toStdString().c_str())) == true) {
         if ((bRet = m_socketClient.SendMsg()) == true) {
+            m_socketClient.resetTxData();
             statusBar()->showMessage("File paths successfully sent to BugSearch app and data processing has started.");
         } else {
             statusBar()->showMessage("Failed to send file paths to BugSearch app.");

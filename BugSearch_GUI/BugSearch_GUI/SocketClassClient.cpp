@@ -91,6 +91,15 @@ bool CSocketClient::setTxData(const uint8_t *pTxBuff, uint8_t uTxMsgLen) {
     return bRet;
 }
 
+void CSocketClient::resetTxData() {
+    memset(m_aTxBuff, 0, TX_BUFF_SIZE);
+    m_uTxMsgIdx = 0;
+}
+
+void CSocketClient::resetRxData() {
+    memset(m_aRxBuff, 0, RX_BUFF_SIZE);
+    m_uRxMsgIdx = 0;
+}
 
 CSocketClient::~CSocketClient()
 {

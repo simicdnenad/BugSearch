@@ -25,7 +25,6 @@ Small application which is searching throught "/test_patterns/landscape.nfo" fil
 │   └── googletest
 ├── README.md
 ├── src
-│   ├── Bug.cpp
 │   ├── BugSearchLinux.cpp
 │   ├── BugSearchWin.cpp
 │   ├── CMakeLists.txt

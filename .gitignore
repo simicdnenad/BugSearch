@@ -32,7 +32,7 @@
 *.app
 
 # Other
-*.pro.user
+#*.pro.user
 *.project
 
 # Unnecessary directories

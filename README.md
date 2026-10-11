@@ -6,16 +6,16 @@ Small application which is searching throught "/test_patterns/landscape.nfo" fil
 ```
 .
 ├── BugSearch_GUI
-│   └── BugSearch_GUI
-│       ├── BugSearch_GUI.pro
-│       ├── cmainwidget.cpp
-│       ├── cmainwidget.h
-│       ├── connstates.h
-│       ├── main.cpp
-│       ├── res
-│       │   └── logo.png
-│       ├── SocketClassClient.cpp
-│       └── SocketClassClient.h
+│   ├── BugSearch_GUI.pro
+│   ├── BugSearch_GUI.pro.user
+│   ├── cmainwidget.cpp
+│   ├── cmainwidget.h
+│   ├── connstates.h
+│   ├── main.cpp
+│   ├── res
+│   │   └── logo.png
+│   ├── SocketClassClient.cpp
+│   └── SocketClassClient.h
 ├── CMakeLists.txt
 ├── include
 │   ├── Bug.h

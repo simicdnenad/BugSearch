@@ -65,14 +65,14 @@ function build_gui()
 {
   cd ${BUILD_DIR}
   echo "Building app GUI version"
-  qmake ${BUGSEARCH_BASE}/BugSearch_GUI/BugSearch_GUI/BugSearch_GUI.pro "CONFIG+=release"
+  qmake ${BUGSEARCH_BASE}/BugSearch_GUI/BugSearch_GUI.pro "CONFIG+=release"
   make -f Makefile
 }
 
 function run_GUI()
 {
   if [[ "$1" == "IPC" ]]; then
-    cp ${BUGSEARCH_BASE}/BugSearch_GUI/BugSearch_GUI/res/logo.png ${BUILD_DIR}
+    cp ${BUGSEARCH_BASE}/BugSearch_GUI/res/logo.png ${BUILD_DIR}
     echo "Starting GUI app"
     ${BUILD_DIR}/BugSearch_GUI &
   fi

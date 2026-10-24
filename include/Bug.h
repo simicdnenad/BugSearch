@@ -73,6 +73,8 @@ namespace landscape {
 			DEBUG_FAIL = 0x01U,
 			LANDSCAPE_FAIL = 0x02U,
 			BUG_FAIL = 0x03U,
+			LANDSCAPE_FILE_EMPTY = 0x04U,
+			BUG_FILE_EMPTY = 0x05U,
 		};
 		static const map<EFileOpenErrors, string> mapFileErrors;
 		const string& GetBugName () const { return m_sBugName; }

@@ -69,7 +69,9 @@ namespace landscape
 		{EFileOpenErrors::ALL_SUCCESSFULL, "Every file opened successfully."},
 		{EFileOpenErrors::DEBUG_FAIL, "Failed to open Debug file:"},
 		{EFileOpenErrors::LANDSCAPE_FAIL, "Failed to open landscape file:"},
-		{EFileOpenErrors::BUG_FAIL, "Failed to open bug file:"}
+		{EFileOpenErrors::BUG_FAIL, "Failed to open bug file:"},
+		{EFileOpenErrors::LANDSCAPE_FILE_EMPTY, "Unable to process empty landscape file:"},
+		{EFileOpenErrors::BUG_FILE_EMPTY, "Unable to process empty bug file:"}
 	};
 	/**
 	 * \brief A Constructor of an object of CBug class type.
@@ -171,6 +173,10 @@ namespace landscape
 			return EFileOpenErrors::BUG_FAIL;
 		else if (infilelanscape.fail())
 			return EFileOpenErrors::LANDSCAPE_FAIL;
+		else if (infilebug.peek() == std::ifstream::traits_type::eof())
+			return EFileOpenErrors::BUG_FILE_EMPTY;
+		else if (infilelanscape.peek() == std::ifstream::traits_type::eof())
+			return EFileOpenErrors::LANDSCAPE_FILE_EMPTY;
 
 
 #ifdef _DEBUG

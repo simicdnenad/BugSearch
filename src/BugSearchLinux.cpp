@@ -18,9 +18,9 @@ typedef CBug<string, CONTAINER<string>::iterator, CONTAINER> CBugT;
  * @param rsLandscapeFile	reference to string that consist path of Landscape file
  * @return int (-1 is false, >=0 numbers of Bug patterns found)
  */
-int processData(string& rsBugFile, string& rsLandscapeFile) {
+std::pair<int, CBugT::EFileOpenErrors > processData(string& rsBugFile, string& rsLandscapeFile) {
 	unsigned int NumOfLines = 0;
-	int retVal = -1;
+	std::pair<int, CBugT::EFileOpenErrors > retVal( 0, CBugT::EFileOpenErrors::ALL_SUCCESSFULL );
 #ifndef MULTI_THREAD
 	CBug<string, CONTAINER<string>::iterator, CONTAINER> bubica(rsBugFile);
 
@@ -39,13 +39,15 @@ int processData(string& rsBugFile, string& rsLandscapeFile) {
 	vector<string>::iterator iBugFilesPaths = vBugFilesPaths.begin();
 	if ((eFileOpen = CBugT::OnInit(iBugFilesPaths, rsLandscapeFile)) != CBugT::EFileOpenErrors::ALL_SUCCESSFULL) {
 		cout << CBugT::mapFileErrors.at(eFileOpen);
-		if (eFileOpen == CBugT::EFileOpenErrors::LANDSCAPE_FAIL) {
+		if (eFileOpen == CBugT::EFileOpenErrors::LANDSCAPE_FAIL || eFileOpen == CBugT::EFileOpenErrors::LANDSCAPE_FILE_EMPTY) {
 			cout << rsLandscapeFile << endl;
 		}
-		else if (eFileOpen == CBugT::EFileOpenErrors::BUG_FAIL)
+		else if (eFileOpen == CBugT::EFileOpenErrors::BUG_FAIL || eFileOpen == CBugT::EFileOpenErrors::BUG_FILE_EMPTY)
 			cout << rsBugFile << endl;
 		else
 			cout << endl;
+
+		retVal.second = eFileOpen;
 	} else {
 		cout << "Number of lines:" << (NumOfLines = CBugT::GetNumOfLines()) << '\n';
 
@@ -65,7 +67,7 @@ int processData(string& rsBugFile, string& rsLandscapeFile) {
 		}
 		vThreads.erase(vThreads.begin(), vThreads.end());
 		vupBugs.erase(vupBugs.begin(), iupBugs);
-		cout << "Total number of Bugs: " << (retVal = CBugT::GetTotNumOfBugs()) << "\n";
+		cout << "Total number of Bugs: " << (retVal.first = CBugT::GetTotNumOfBugs()) << "\n";
 	}
 #endif
 	return retVal;
@@ -112,7 +114,7 @@ int main()
 			cout << "Landscape file:" << strLandscape << endl;
 			cout << "Bug file:" << strBug << endl;
 
-			iBugsFound = processData(strBug, strLandscape);
+			iBugsFound = processData(strBug, strLandscape).first;
 			socketWaitClient.setTxDataInt(iBugsFound);
 			socketWaitClient.SendMsg();
 			socketWaitClient.resetTxData();
